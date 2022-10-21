@@ -133,10 +133,10 @@ const Dashboard = () => {
                     <div className="text-white text-sm">Native Balances</div>
                     {/* <div className="text-white text-sm">{balances.address}</div> */}
                     <div className="text-app-dark-400">
-                      Your approximated net balance is:
+                      Your approximated net worth is:
                     </div>
                     <div className="text-white text-md">
-                      ${balances.nativeBalances.cUSDBalance}
+                      ${balances.netWorth}
                     </div>
                   </div>
                   <div className="flex flex-col gap-4">
@@ -153,7 +153,7 @@ const Dashboard = () => {
                           Your current cUSD balance is:
                         </div>
                         <div className="text-white text-sm">
-                          ${balances.nativeBalances.cUSDBalance}
+                          {balances.nativeBalances.cUSDBalance} $cUSD
                         </div>
                       </div>
                     </div>
@@ -170,7 +170,7 @@ const Dashboard = () => {
                           Your current Celo balance is:
                         </div>
                         <div className="text-white text-sm">
-                          ${balances.nativeBalances.celoBalance}
+                          {balances.nativeBalances.celoBalance} $CELO
                         </div>
                       </div>
                     </div>
