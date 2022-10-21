@@ -1,38 +1,148 @@
-.App {
-  text-align: center;
+.bg-intro {
+  background-image: url("./assets/background/intro-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
-.App-logo {
-  height: 40vmin;
+.bg-signin {
+  background-image: url("./assets/background/login-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-dashboard {
+  background-image: url("./assets/background/dashboard-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bg-sidebar {
+  background-color: rgba(37, 37, 38, 0.5);
+}
+
+.bg-token-detail {
+  background-color: rgba(55, 55, 55, 0.7);
+}
+
+.bg-token-light {
+  background-color: rgba(55, 55, 55, 0.85);
+}
+
+.text-gradient {
+  background: -webkit-linear-gradient(75deg, #41a58d, #eee);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gradient {
+  background: -webkit-linear-gradient(347deg, #41a58d, #1b2f2a);
+}
+
+.button-bg-gradient {
+  background: -webkit-linear-gradient(0deg, #000000, #378a77);
+}
+
+.bg-contact {
+  background-image: url("./assets/background/contact-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bg-marketplace {
+  background-image: url("./assets/background/top-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bg-benefit {
+  background-image: url("./assets/background/benefit-background.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.bg-error {
+  background: -webkit-linear-gradient(347deg, #7a0909, #7a0909);
+}
+
+.middle-liner::before {
   pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+  content: "";
+  width: 125px;
+  height: 1px;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+  border: 1px solid #373737;
+  position: absolute;
+  top: 13px;
+  left: -163px;
+}
+
+.text-investment::after {
+  pointer-events: none;
+  content: "";
+  width: 30px;
+  height: 1px;
+  display: flex;
+  border: 1px solid #41a58d;
+  margin-top: 20px;
+}
+
+.middle-liner::after {
+  pointer-events: none;
+  content: "";
+  width: 125px;
+  height: 1px;
+  display: flex;
+  border: 1px solid #373737;
+  position: absolute;
+  top: 13px;
+  right: -163px;
+}
+
+.middle-liner {
+  position: relative;
+  margin-left: 163px;
+  margin-right: 163px;
+}
+
+.button-gradient {
+  background: -webkit-linear-gradient(360deg, #41a58d, #1b2f2a);
+}
+
+input {
+  background: transparent;
+  outline: none;
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.input-value {
+  text-align: center;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.input-contact {
+  background: transparent;
+  outline: none;
+  border: white;
+  border: 1px solid #fff;
+}
+
+.hoverable-item:hover {
+  background-color: white;
+  background: -webkit-linear-gradient(75deg, #41a58d, #eee);
+  /* -webkit-background-clip: text; */
+  /* -webkit-text-fill-color: transparent; */
+}
+
+.hoverable-btn:hover {
+  background: -webkit-linear-gradient(360deg, #41a58d, #1b2f2a);
+}
+
+.disabled-btn {
+  background-color: gray;
+  cursor: none;
+}
+
+.text-green {
+  color: rgb(65 165 141);
 }
