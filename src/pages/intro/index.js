@@ -9,7 +9,7 @@ const IntroPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    !!uid && navigate("/dashboard");
+    !!uid && navigate("/marketplace");
   }, []);
 
   return (

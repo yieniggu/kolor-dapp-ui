@@ -80,11 +80,10 @@ const Marketplace = () => {
           <SideBar />
           <div className="flex flex-col pt-48 w-full md:w-4/5 xl:w-5/6 gap-8 pb-16 pr-4 sm:pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-0 lg:pr-8 xl:pr-16">
             <div className="flex flex-col xl:flex-row gap-8 w-full min-h-1/2 xl:h-72">
-              <div className="flex flex-col gap-6 bg-marketplace px-12 py-12 w-full xl:w-2/3 rounded-4xl lg:mb-2 xl:mb-0">
+              <div className="flex flex-col gap-6 bg-marketplace px-12 py-12 w-full rounded-4xl lg:mb-2 xl:mb-0">
                 <div className="text-white">The Largest Lands Marketplace</div>
                 <div className="text-white text-md">Available Lands</div>
               </div>
-              <img src={Video} alt="video" className="w-full xl:w-1/3" />
             </div>
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex flex-col gap-4 w-full lg:w-1/3">
@@ -106,38 +105,48 @@ const Marketplace = () => {
               </div>
               <div className="flex flex-col gap-4 w-full lg:w-2/3">
                 <div className="flex flex-col bg-benefit py-8 px-2 md:px-4 lg:px-8 rounded-2xl gap-8">
+                  <span className="text-app-main-100 text-lg">
+                    Purchase today... Conserve for the future!
+                  </span>
                   <span className="text-white text-md">
-                    Purchase the conservation rigths over a piece of land,
-                    looking forward to:
+                    Become a patagonian landowner and look forward to:
                   </span>
                   <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
                     <div className="rounded-full bg-gradient text-white px-2 h-6">
                       1
                     </div>
                     <span className="text-white">
-                      Monitoring and protecting some of the wildest trees and
-                      species in Patagonia!
+                      Ensure land conservation for 30 years.
                     </span>
                   </div>
-                  <span className="text-white">Trees</span>
+                  <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
+                    <div className="rounded-full bg-gradient text-white px-2 h-6">
+                      2
+                    </div>
+                    <span className="text-white">
+                      Protect and monitor some of the wildest trees and animals
+                      in Patagonia!
+                    </span>
+                  </div>
+                  <span className="text-white">{"Trees >"}</span>
                   <TreeSlider responsive={responsive} />
-                  <span className="text-white">Animals</span>
+                  <span className="text-white">{"Animals >"}</span>
                   <AnimalSlider responsive={responsive} />
-                  <div className="flex flex-col md:flex-row gap-8">
-                    <div className="flex w-full md:w-1/2 gap-2 md:gap-4 lg:gap-8 border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6">
-                      <div className="flex flex-col rounded-full bg-gradient text-white px-2 h-6">
-                        2
-                      </div>
-                      <span className="text-white">Make guided visits</span>
+                  <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
+                    <div className="rounded-full bg-gradient text-white px-2 h-6">
+                      3
                     </div>
-                    <div className="flex w-full md:w-1/2 gap-2 md:gap-4 lg:gap-8 border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6">
-                      <div className="rounded-full bg-gradient text-white px-2 h-6">
-                        3
-                      </div>
-                      <span className="text-white">
-                        Future carbon credit yields
-                      </span>
+                    <span className="text-white">
+                      Future carbon credit yields.
+                    </span>
+                  </div>
+                  <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
+                    <div className="rounded-full bg-gradient text-white px-2 h-6">
+                      4
                     </div>
+                    <span className="text-white">
+                      Transparent legal ownership rights.
+                    </span>
                   </div>
                 </div>
               </div>

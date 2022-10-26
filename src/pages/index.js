@@ -52,6 +52,8 @@ const Pages = () => {
               </PublicRoute>
             }
           />
+          <Route path="/marketplace" element={<Marketplace />} />
+
           <Route
             path="/dashboard"
             element={
@@ -78,7 +80,6 @@ const Pages = () => {
             }
           />
 
-          <Route path="/marketplace" element={<Marketplace />} />
           <Route path="/lands/:id" element={<Land />} />
         </Routes>
       </BrowserRouter>

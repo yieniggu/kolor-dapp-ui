@@ -4,7 +4,7 @@ const SliderItem = ({ image, name, title }) => {
       <img src={image} alt={name} className="rounded-full" />
       <div className="flex flex-col text-white">
         <span className="">{name}</span>
-        <span>{title}</span>
+        {/* <span>{title}</span> */}
       </div>
     </div>
   );

@@ -50,7 +50,7 @@ const Dashboard = () => {
       <Layout title="Kolor | Dashboard">
         <div className="flex gap-16 bg-dashboard min-h-screen w-full">
           <SideBar />
-          <div className="flex flex-col pt-48 w-full gap-8">
+          <div className="flex flex-col pt-48 w-full gap-8 mb-10">
             <div className="flex flex-col lg:flex-row w-full gap-12 lg:gap-0 pl-4 tiny:pl-6 sm:pl-12 md:pl-0 pr-4 tiny:pr-6 sm:pr-12 lg:pr-0">
               {checkingInvestments ? (
                 <div className="flex flex-col w-full lg:w-1/2 2xl:w-3/5 border border-main rounded-3xl px-4 sm:px-6 md:px-8 py-8 gap-6">
@@ -83,10 +83,10 @@ const Dashboard = () => {
                   </div>
                   <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row">
                     <div className="flex w-full sm:w-1/2 lg:w-full xl:w-1/2 text-white">
-                      Token price(in cUSD):
+                      Token price:
                     </div>
                     <div className="flex flex-row sm:flex-row-reverse lg:flex-row xl:flex-row-reverse w-full sm:w-1/2 lg:w-full xl:w-1/2 text-app-dark-400">
-                      ${investments[investments.length - 1][3]}
+                      {investments[investments.length - 1][3]} $cUSD
                     </div>
                   </div>
                   <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row">

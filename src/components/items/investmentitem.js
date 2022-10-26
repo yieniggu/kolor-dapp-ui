@@ -42,16 +42,16 @@ const InvestmentItem = ({ investment, index }) => {
             </div>
             <div className="flex flex-col md:flex-row">
               <div className="flex w-full md:w-1/2 text-white">
-                Token price (in cUSD):
+                Token price:
               </div>
               <div className="flex md:flex-row-reverse w-full md:w-1/2 text-app-dark-400">
-                {investment[3]}
+                {investment[3]} $cUSD
               </div>
             </div>
             <div className="flex flex-col md:flex-row">
-              <div className="flex w-1/2 text-white">Tokens paid:</div>
+              <div className="flex w-1/2 text-white">Total paid:</div>
               <div className="flex md:flex-row-reverse w-full md:w-1/2 text-app-dark-400">
-                {investment[2] * investment[3]}
+                {investment[2] * investment[3]} $cUSD
               </div>
             </div>
             <div className="flex flex-col md:flex-row">

@@ -15,6 +15,14 @@ import DotLoader from "react-spinners/DotLoader";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { SpeciesItem } from "../../components/items/speciesitem";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import CostaMap from "../../assets/image/costa.jpg";
+import OutlineWallet from "../../assets/image/outlined_wallet.png";
+import ProgressBar from "../../components/progressbar";
+import TreeSlider from "../../components/slider/TreeSlider";
+import AnimalSlider from "../../components/slider/AnimalSlider";
+import { getAssetsBalances } from "../../actions/token";
 
 const override = {
   margin: "0 auto",
@@ -22,6 +30,47 @@ const override = {
 };
 
 const Land = () => {
+  const responsive = [
+    {
+      breakpoint: 3000,
+      settings: {
+        slidesToShow: 3,
+        infinite: true,
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 1366,
+      settings: {
+        slidesToShow: 4,
+        infinite: true,
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 1024,
+      settings: {
+        slidesToShow: 3,
+        infinite: true,
+        dots: true,
+      },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 2,
+        initialSlide: 1,
+      },
+    },
+    {
+      breakpoint: 480,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ];
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { id } = useParams();
@@ -29,6 +78,7 @@ const Land = () => {
   const { gettingNFT, NFT, publishedNFTs, NFTError, allNFTs } = useSelector(
     (state) => state.NFT
   );
+  const { balances, checkingBalances } = useSelector((state) => state.token);
 
   const [selected, setSelected] = useState({});
 
@@ -70,6 +120,12 @@ const Land = () => {
   }, []);
 
   useEffect(() => {
+    if (Object.keys(balances).length === 0) {
+      dispatch(getAssetsBalances());
+    }
+  }, []);
+
+  useEffect(() => {
     AOS.init({ once: true });
   }, []);
 
@@ -78,215 +134,116 @@ const Land = () => {
     navigate(`/lands/${NFT.tokenId}/buy`);
   };
 
-  const handleSelection = (index) => {
-    setSelected(NFT.species[index]);
-  };
-
   return (
     <>
       <Layout title="Kolor | Land Details">
-        <div className="flex gap-4 md:gap-8 lg:gap-12 xl:gap-16 bg-dashboard min-h-screen w-full">
+        <div className="flex gap-4 md:gap-8 lg:gap-12 xl:gap-16 min-h-screen w-full">
           <SideBar />
-          {gettingNFT ? (
-            <div className="flex flex-col w-full pt-48 pb-16 gap-6 items-center justify-center pr-4 sm:pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-12 lg:pr-8 xl:pr-16">
-              <DotLoader
-                color="rgba(91, 230, 202, 0.84)"
-                loading={gettingNFT}
-                cssOverride={override}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-col w-full pt-48 pb-16 gap-6 items-center justify-center pr-4 sm:pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-12 lg:pr-8 xl:pr-16">
-              <div
-                className="flex flex-col lg:flex-row bg-sidebar rounded-3xl px-4 md:px-8 lg:px-12 xl:px-16 py-16 gap-8"
-                data-aos="zoom-in"
-                data-aos-duration="700"
-              >
-                <div className="flex flex-col gap-4 w-full lg:w-1/4">
-                  <img src={Map} alt="map" className="" />
-                  <div className="text-white text-sm">{NFT.name}</div>
-                  <button className="text-white py-1 rounded-full border border-main w-48">
-                    Contact
-                  </button>
-                </div>
-                <div className="flex flex-col gap-8">
-                  <div className="text-app-dark-400 text-sm">Land details</div>
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="text-white">
-                        This land originially belonged to{" "}
-                        <span className="text-green">{NFT.landOwnerAlias}</span>
-                        , who has provided it to{" "}
-                        <span className="text-green">Kolor</span> for
-                        conservation since{" "}
-                        <span className="text-green">
-                          {getDate(NFT.creationDate)}
-                        </span>
+          <div className="flex flex-col xl:flex-row pt-48 w-full md:w-4/5 xl:w-5/6 gap-8 pb-16 pr-4 sm:pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-0 lg:pr-8 xl:pr-16">
+            <div className="flex flex-col w-full xl:w-1/2 gap-6">
+              <img src={CostaMap} alt="costa_map" className="rounded-2xl" />
+              <div className="flex flex-col gap-2">
+                <span className="text-white">Price</span>
+                <div className="flex flex-col gap-4 tiny:flex-row tiny:gap-0">
+                  {gettingNFT ? (
+                    <DotLoader
+                      color="rgba(91, 230, 202, 0.84)"
+                      loading={gettingNFT}
+                      cssOverride={override}
+                    />
+                  ) : (
+                    <div className="flex flex-row">
+                      <div
+                        className="text-white px-6 py-2 bg-common-gradient rounded-l-2xl text-sm"
+                        data-aos="zoom-in-right"
+                        data-aos-duration="600"
+                      >
+                        {NFT.landTokenInfo.tokenPrice} $cUSD
                       </div>
+                      <button
+                        className="py-2 px-16 button-gradient text-white text-sm rounded-full"
+                        data-aos="fade-left"
+                        data-aos-duration="400"
+                        onClick={handleBuy}
+                      >
+                        Pay!
+                      </button>
                     </div>
-                    <div className="text-white">
-                      Located in{" "}
-                      <span className="text-green">
-                        {NFT.city}, {NFT.stateOrRegion}, {NFT.country}.
-                      </span>{" "}
-                      It has a total size of{" "}
-                      <span className="text-green">
-                        {NFT.size} {NFT.unit}.
-                      </span>
-                    </div>
-                    {/* <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex text-white">
-                        Estimated Initial TCO2 projected per year:
-                      </div>
-                      <div className="flex text-app-main-100">
-                        {NFT.initialTCO2perYear}
-                      </div>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex text-white">
-                        Estimated Current TCO2 projected per year:
-                      </div>
-                      <div className="flex text-app-main-100">
-                        {NFT.VCUInfo.projectedVCUS}
-                      </div>
-                    </div>
-                    <div className="flex flex-col md:flex-row gap-4">
-                      <div className="flex text-white">
-                        TCO2 sold from this land:
-                      </div>
-                      <div className="flex text-app-main-100">
-                        {NFT.soldTCO2}
-                      </div>
-                    </div> */}
-                  </div>
-                  {/* <div
-                    className="flex bg-gradient px-6 py-6 cursor-pointer text-white rounded-3xl"
-                    data-aos="fade-up"
-                    data-aos-duration="800"
-                  >
-                    This land has emitted{" "}
-                    {roundValue(NFT.VCUInfo.emittedVCUs, 2)} TCO2 and has a
-                    remaining of {roundValue(NFT.VCUInfo.VCUsLeft, 2)} TCO2 to
-                    sell.
-                  </div> */}
+                  )}
                 </div>
               </div>
-              <div className="text-app-dark-400 text-sm">
-                Start protecting Patagonia with just a few clicks!
-              </div>
-              <div className="flex flex-col md:flex-row gap-4 lg:px-12 w-full">
-                <button
-                  className="w-full flex items-center justify-center text-white rounded-2xl py-4 border border-main hoverable-btn"
-                  onClick={handleBuy}
-                  data-aos="fade-right"
-                  data-aos-duration="400"
-                >
-                  Land Tokens available
-                </button>
-                <button
-                  className="w-full flex button-gradient items-center justify-center text-white rounded-2xl py-4"
-                  data-aos="fade-left"
-                  data-aos-duration="700"
-                  disabled
-                >
-                  Let's Kolor Soon!
-                </button>
-              </div>
-              <div className="flex flex-col w-full lg:flex-row gap-8 border border-main rounded-2xl px-4 md:px-8 lg:px-10 xl:px-12 py-12">
-                {NFT.species.length > 0 ? (
-                  <div className="flex flex-col w-full lg:w-1/2 gap-4 text-white">
-                    <div className="text-white py-6">
-                      Select species to see its details
-                    </div>
-                    {NFT.species.map((species, idx) => (
-                      <SpeciesItem
-                        key={idx}
-                        species={species}
-                        index={idx}
-                        selected={selected}
-                        handleSelection={handleSelection}
+              <div className="flex flex-col gap-4 border border-main rounded-3xl py-4 px-6">
+                <div className="flex gap-4">
+                  <img
+                    src={OutlineWallet}
+                    className="h-12 my-auto"
+                    alt="outline-wallet"
+                  />
+                  <div className="flex flex-col">
+                    <span className="text-white">
+                      Current balance in your wallet:
+                    </span>
+                    {checkingBalances ? (
+                      <DotLoader
+                        color="rgba(91, 230, 202, 0.84)"
+                        loading={checkingBalances}
+                        cssOverride={override}
                       />
-                    ))}
+                    ) : (
+                      <span className="text-app-main-100 text-sm">
+                        {balances.nativeBalances.cUSDBalance} $cUSD
+                      </span>
+                    )}
                   </div>
+                </div>
+                {checkingBalances ? (
+                  ""
                 ) : (
-                  <div className="flex flex-col w-full lg:w-1/2 gap-4 text-white">
-                    No species added yet...
-                  </div>
-                )}
-
-                {Object.keys(selected).length > 0 ? (
-                  <div className="flex flex-col w-full lg:w-1/2 gap-4">
-                    <div className="text-white py-8">Specie Info</div>
-                    <div className="flex gap-3">
-                      <div className="text-white">Specie:</div>
-                      <div className="text-app-main-100">
-                        {selected.speciesAlias}
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="text-white">Scientific Name:</div>
-                      <div className="text-app-main-100">
-                        {selected.scientificName}
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="text-white">Density:</div>
-                      <div className="text-app-main-100">
-                        {normalizeNumber(
-                          selected.density,
-                          selected.decimals * -1
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="text-white">
-                        TCO2 projected from specie per year:
-                      </div>
-                      <div className="text-app-main-100">
-                        {normalizeNumber(
-                          selected.TCO2perYear,
-                          selected.decimals * -1
-                        )}
-                      </div>
-                    </div>
-                    {/* <div className="flex gap-3">
-                    <div className="text-white">TCO2 offset per second:</div>
-                    <div className="text-app-main-100">
-                      {normalizeNumber(
-                        selected.TCO2perSecond,
-                        selected.decimals * -1
-                      )}
-                    </div>
-                  </div> */}
-                    <div className="flex gap-3">
-                      <div className="text-white">Added on:</div>
-                      <div className="text-app-main-100">
-                        {getDate(selected.creationDate)}
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="text-white">Last update on:</div>
-                      <div className="text-app-main-100">
-                        {selected.updateDate != 0
-                          ? getDate(selected.updateDate)
-                          : "No updates yet..."}
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex flex-col w-full lg:w-1/2 gap-4">
-                    {" "}
-                    <div className="text-white py-8">Specie Info</div>
-                    <div className="flex gap-3">
-                      <div className="text-white">
-                        Select a specie from left to see its details...
-                      </div>
-                    </div>
-                  </div>
+                  <ProgressBar
+                    bgcolor="#00A78D"
+                    completed={
+                      balances.nativeBalances.cUSDBalance /
+                        NFT.landTokenInfo.tokenPrice <
+                      1
+                        ? (balances.nativeBalances.cUSDBalance /
+                            NFT.landTokenInfo.tokenPrice) *
+                          100
+                        : 100
+                    }
+                    data-aos="fade-right"
+                    data-aos-duration="700"
+                  />
                 )}
               </div>
             </div>
-          )}
+            <div className="flex flex-col w-full xl:w-1/2 gap-6">
+              <div className="border border-main rounded-2xl px-4 py-6">
+                {gettingNFT ? (
+                  <DotLoader
+                    color="rgba(91, 230, 202, 0.84)"
+                    loading={gettingNFT}
+                    cssOverride={override}
+                  />
+                ) : (
+                  <div>
+                    <span className="text-app-main-100 text-md mr-3">
+                      {NFT.size} {NFT.unit}
+                    </span>
+                    <span className="text-white">
+                      of untouched wild land in northern Patagonia, where
+                      deforestation reaches a 1% annual rate.
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="gap-2 border border-main rounded-2xl px-4 py-6">
+                <span className="text-white">{"Trees >"}</span>
+                <TreeSlider responsive={responsive} />
+                <span className="text-white">{"Animals >"}</span>
+                <AnimalSlider responsive={responsive} />
+              </div>
+            </div>
+          </div>
         </div>
       </Layout>
     </>

@@ -5,7 +5,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   finishGetNFTAction,
   getNFT,
@@ -48,6 +48,7 @@ const Buy = () => {
 
   const { balances, buying } = useSelector((state) => state.token);
   const { uid } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
 
   useEffect(() => {
     dispatch(getNFTAction());
@@ -98,6 +99,10 @@ const Buy = () => {
     dispatch(acquireLandTokens(NFT.tokenId, tokensToBuy, uid, NFT.unit));
   };
 
+  const handleNavigate = () => {
+    navigate("/wallet");
+  };
+
   return (
     <>
       <Modal />
@@ -131,63 +136,35 @@ const Buy = () => {
                       <img src={parque} alt="parque" className="w-48" />
                     </Slider>
                   </div>
-                  <div className="text-app-dark-400 text-sm">Land details</div>
-                  <div className="flex gap-4">
-                    <div className="text-white">Land Owner:</div>
-                    <div className="text-app-main-100">
+                  <div className="text-app-dark-400 text-md">Land details</div>
+                  <div className="text-white text-sm">
+                    The <span className="text-app-main-100">{NFT.name}</span>{" "}
+                    land located in{" "}
+                    <span className="text-app-main-100">
+                      {NFT.city}, {NFT.stateOrRegion}, {NFT.country}
+                    </span>{" "}
+                    originally belonged to{" "}
+                    <span className="text-app-main-100">
                       {NFT.landOwnerAlias}
-                    </div>
+                    </span>{" "}
+                    and belongs to
+                    <span className="text-app-main-100">
+                      {" "}
+                      Kolor since {getDate(NFT.creationDate)}.
+                    </span>{" "}
+                    With a total size of{" "}
+                    <span className="text-app-main-100">
+                      {NFT.size} {NFT.unit}
+                    </span>{" "}
+                    is one of the featured lands in Kolor marketplace.
                   </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">Land Owner Address:</div>
-                    <div className="text-app-main-100 truncate">
-                      {NFT.landOwner}
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">Country:</div>
-                    <div className="text-app-main-100">{NFT.country}</div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">State or region:</div>
-                    <div className="text-app-main-100">{NFT.stateOrRegion}</div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">City:</div>
-                    <div className="text-app-main-100">{NFT.city}</div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">Size ({NFT.unit}):</div>
-                    <div className="text-app-main-100">{NFT.size} m2</div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">
-                      Estimated Initial TCO2 projected per year:
-                    </div>
-                    <div className="text-app-main-100">
-                      {NFT.initialTCO2perYear}
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">
-                      Estimated Current TCO2 projected per year:
-                    </div>
-                    <div className="text-app-main-100">
-                      {roundValue(NFT.VCUInfo.projectedVCUS, 2)}
-                    </div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">TCO2 sold from this land:</div>
-                    <div className="text-app-main-100">{NFT.soldTCO2}</div>
-                  </div>
-                  <div className="flex gap-4">
-                    <div className="text-white">This land was created on:</div>
-                    <div className="text-app-main-100">
-                      {getDate(NFT.creationDate)}
+                  <div className="flex gap-4 justify-center">
+                    <div className="text-app-main-100 text-lg py-4">
+                      Conserve it now!
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col bg-contact py-24 px-6 xl:px-12 gap-6 rounded-4xl">
+                {/* <div className="flex flex-col bg-contact py-24 px-6 xl:px-12 gap-6 rounded-4xl">
                   <div className="text-white text-sm">Looking to invest?</div>
                   <div className="text-white">
                     Suscribe now and start protecting Patagonia!
@@ -202,7 +179,7 @@ const Buy = () => {
                       Suscribe
                     </button>
                   </div>
-                </div>
+                </div> */}
               </div>
               {Object.keys(balances).length > 0 ? (
                 <div
@@ -272,7 +249,10 @@ const Buy = () => {
                         <p className="text-center text-app-red">
                           Not enough funds!
                         </p>
-                        <button className="border border-main rounded-full text-white py-2 px-6 mt-2 hoverable-btn">
+                        <button
+                          className="border border-main rounded-full text-white py-2 px-6 mt-2 hoverable-btn"
+                          onClick={handleNavigate}
+                        >
                           Deposit now over CELO network!
                         </button>
                         <p className="text-center"></p>
