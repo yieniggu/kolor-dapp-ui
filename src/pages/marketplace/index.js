@@ -127,22 +127,15 @@ const Marketplace = () => {
                       Protect and monitor some of the wildest trees and animals
                       in Patagonia!
                     </span>
-                  </div>
+                    {/* </div>
                   <span className="text-white">{"Trees >"}</span>
                   <TreeSlider responsive={responsive} />
                   <span className="text-white">{"Animals >"}</span>
-                  <AnimalSlider responsive={responsive} />
-                  <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
-                    <div className="rounded-full bg-gradient text-white px-2 h-6">
-                      3
-                    </div>
-                    <span className="text-white">
-                      Future carbon credit yields.
-                    </span>
+                  <AnimalSlider responsive={responsive} /> */}
                   </div>
                   <div className="flex border border-main rounded-3xl px-2 md:px-4 lg:px-8 py-6 gap-2 md:gap-4 lg:gap-8">
                     <div className="rounded-full bg-gradient text-white px-2 h-6">
-                      4
+                      3
                     </div>
                     <span className="text-white">
                       Transparent legal ownership rights.
@@ -152,7 +145,7 @@ const Marketplace = () => {
               </div>
             </div>
 
-            <h2 className="text-white">Featured Lands</h2>
+            <h2 className="text-white text-md">Featured Lands</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-3 grid-flow-row gap-4">
               {publishedNFTs.map((publishedNFT, idx) => (
                 <MarketplaceItem key={idx} land={publishedNFT} />

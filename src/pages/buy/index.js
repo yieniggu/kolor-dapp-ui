@@ -159,7 +159,7 @@ const Buy = () => {
                     is one of the featured lands in Kolor marketplace.
                   </div>
                   <div className="flex gap-4 justify-center">
-                    <div className="text-app-main-100 text-md py-4 hover:text-lg hover:rounded-full hover:bg-white hover:p-6">
+                    <div className="text-app-main-100 text-md">
                       Conserve it now!
                     </div>
                   </div>

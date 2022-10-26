@@ -142,36 +142,7 @@ const Land = () => {
           <div className="flex flex-col xl:flex-row pt-48 w-full md:w-4/5 xl:w-5/6 gap-8 pb-16 pr-4 sm:pr-8 md:pr-12 pl-4 sm:pl-8 md:pl-0 lg:pr-8 xl:pr-16">
             <div className="flex flex-col w-full xl:w-1/2 gap-6">
               <img src={CostaMap} alt="costa_map" className="rounded-2xl" />
-              <div className="flex flex-col gap-2">
-                <span className="text-white text-sm">Price</span>
-                <div className="flex flex-col gap-4 tiny:flex-row tiny:gap-0">
-                  {gettingNFT ? (
-                    <DotLoader
-                      color="rgba(91, 230, 202, 0.84)"
-                      loading={gettingNFT}
-                      cssOverride={override}
-                    />
-                  ) : (
-                    <div className="flex flex-row">
-                      <div
-                        className="text-white px-6 py-2 bg-common-gradient rounded-l-2xl text-sm"
-                        data-aos="zoom-in-right"
-                        data-aos-duration="600"
-                      >
-                        {NFT.landTokenInfo.tokenPrice} $cUSD
-                      </div>
-                      <button
-                        className="py-2 px-16 button-gradient text-white text-sm rounded-full hover:border-1 hover:border-white"
-                        data-aos="fade-left"
-                        data-aos-duration="400"
-                        onClick={handleBuy}
-                      >
-                        Pay!
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <div className="flex flex-col gap-2"></div>
               <div className="flex flex-col gap-4 border border-main rounded-3xl py-4 px-6">
                 <div className="flex gap-4">
                   <img
@@ -236,12 +207,40 @@ const Land = () => {
                   </div>
                 )}
               </div>
-              <div className="gap-2 border border-main rounded-2xl px-4 py-6">
+              <span className="text-white text-sm">Price</span>
+              <div className="flex flex-col gap-4 tiny:flex-row tiny:gap-0">
+                {gettingNFT ? (
+                  <DotLoader
+                    color="rgba(91, 230, 202, 0.84)"
+                    loading={gettingNFT}
+                    cssOverride={override}
+                  />
+                ) : (
+                  <div className="flex flex-row">
+                    <div
+                      className="text-white px-6 py-2 bg-common-gradient rounded-l-2xl text-sm"
+                      data-aos="zoom-in-right"
+                      data-aos-duration="600"
+                    >
+                      {NFT.landTokenInfo.tokenPrice} $cUSD
+                    </div>
+                    <button
+                      className="py-2 px-16 button-gradient text-white text-sm rounded-full hover:border-1 hover:border-white"
+                      data-aos="fade-left"
+                      data-aos-duration="400"
+                      onClick={handleBuy}
+                    >
+                      Pay!
+                    </button>
+                  </div>
+                )}
+              </div>
+              {/* <div className="gap-2 border border-main rounded-2xl px-4 py-6">
                 <span className="text-white">{"Trees >"}</span>
                 <TreeSlider responsive={responsive} />
                 <span className="text-white">{"Animals >"}</span>
                 <AnimalSlider responsive={responsive} />
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
