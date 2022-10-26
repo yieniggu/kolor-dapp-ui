@@ -80,7 +80,14 @@ const Pages = () => {
             }
           />
 
-          <Route path="/lands/:id" element={<Land />} />
+          <Route
+            path="/lands/:id"
+            element={
+              <PrivateRoute uid={uid}>
+                <Land />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>

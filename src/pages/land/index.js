@@ -143,7 +143,7 @@ const Land = () => {
             <div className="flex flex-col w-full xl:w-1/2 gap-6">
               <img src={CostaMap} alt="costa_map" className="rounded-2xl" />
               <div className="flex flex-col gap-2">
-                <span className="text-white">Price</span>
+                <span className="text-white text-sm">Price</span>
                 <div className="flex flex-col gap-4 tiny:flex-row tiny:gap-0">
                   {gettingNFT ? (
                     <DotLoader
@@ -161,7 +161,7 @@ const Land = () => {
                         {NFT.landTokenInfo.tokenPrice} $cUSD
                       </div>
                       <button
-                        className="py-2 px-16 button-gradient text-white text-sm rounded-full"
+                        className="py-2 px-16 button-gradient text-white text-sm rounded-full hover:border-1 hover:border-white"
                         data-aos="fade-left"
                         data-aos-duration="400"
                         onClick={handleBuy}
@@ -196,7 +196,7 @@ const Land = () => {
                     )}
                   </div>
                 </div>
-                {checkingBalances ? (
+                {checkingBalances || gettingNFT ? (
                   ""
                 ) : (
                   <ProgressBar
