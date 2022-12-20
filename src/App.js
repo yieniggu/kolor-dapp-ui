@@ -1,8 +1,8 @@
-import React, { Suspense, useEffect } from "react";
-import { Provider } from "react-redux";
+import React, { Suspense } from "react";
 import { CookiesProvider } from "react-cookie";
-import Pages from "./pages";
+import { Provider } from "react-redux";
 import "./App.css";
+import { AppRouter } from "./routers/AppRouter";
 import { store } from "./store/store";
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
     <CookiesProvider>
       <Suspense>
         <Provider store={store}>
-          <Pages />
+          <AppRouter />
         </Provider>
       </Suspense>
     </CookiesProvider>

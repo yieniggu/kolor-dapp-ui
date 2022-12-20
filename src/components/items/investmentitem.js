@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { getDate } from "../../utils/web3Utils";
+import { getDate } from "../../utils/web3";
 import "animate.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
@@ -57,7 +57,7 @@ const InvestmentItem = ({ investment, index }) => {
             <div className="flex flex-col md:flex-row">
               <div className="flex w-1/2 text-white">Date of purchase:</div>
               <div className="flex md:flex-row-reverse w-full md:w-1/2 text-app-dark-400">
-                {getDate(investment[4])}
+                {getDate(investment[5])}
               </div>
             </div>
           </div>

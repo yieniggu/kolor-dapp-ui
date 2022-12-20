@@ -53,7 +53,7 @@
 .bg-marketplace {
   background-image: url("./assets/background/top-background.png");
   background-repeat: no-repeat;
-  background-size: cover;
+  background-size: fill;
 }
 
 .bg-benefit {

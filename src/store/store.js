@@ -1,14 +1,18 @@
-import { applyMiddleware, createStore, compose } from "redux";
-import thunk from "redux-thunk";
-import { rootReducer } from "../reducers/rootReducer";
+import { configureStore } from "@reduxjs/toolkit";
+import { authSlice } from "./slices/auth/authSlice";
+import { daoSlice } from "./slices/dao";
+import { NFTSlice } from "./slices/NFT";
+import { tokenSlice } from "./slices/token/tokenSlice";
+import { uiSlice } from "./slices/UI/uiSlice";
+import { connectionSlice } from "./slices/connection";
 
-const composeEnhancers =
-  (typeof window !== "undefined" &&
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) ||
-  compose;
-
-export const store = createStore(
-  rootReducer,
-  composeEnhancers(applyMiddleware(thunk))
-  //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+export const store = configureStore({
+  reducer: {
+    auth: authSlice.reducer,
+    connection: connectionSlice.reducer,
+    ui: uiSlice.reducer,
+    token: tokenSlice.reducer,
+    NFT: NFTSlice.reducer,
+    dao: daoSlice.reducer,
+  },
+});

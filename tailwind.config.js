@@ -103,6 +103,7 @@ module.exports = {
             DEFAULT: "#CE1415",
           },
         },
+        interaction: "#00a78d",
       },
       lineHeight: {
         11: "3rem",

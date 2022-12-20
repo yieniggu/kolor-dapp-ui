@@ -1,21 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
 
-const costa = require("../../assets/image/costa.jpg");
-const parque = require("../../assets/image/parque.jpg");
-
-const settings = {
-  dots: true,
-  infinite: true,
-  speed: 500,
-  slidesToShow: 1,
-  slidesToScroll: 1,
-};
+const Placeholder = require("../../assets/image/placeholder.png");
 
 const MarketplaceItem = ({ land }) => {
   const navigate = useNavigate();
@@ -28,45 +18,57 @@ const MarketplaceItem = ({ land }) => {
 
   return (
     <>
+      {/* {!name.includes("test") && !name.includes("Test") && ( */}
       <div
-        className="flex flex-col px-6 py-6 gap-4 bg-body rounded-3xl"
+        className="flex flex-col px-6 py-6 gap-4 bg-body rounded-3xl 3xl:w-3/4 tiny:w-full "
         data-aos="zoom-in"
         data-aos-duration={600}
       >
         <div className="w-full">
-          <Slider {...settings}>
-            <img src={costa} alt={name + "-costa"} />
-            <img src={parque} alt={name + "-parque"} />
-          </Slider>
+          <img src={Placeholder} alt={name + "-placeholder"} />
         </div>
-        <div className="text-white text-sm">{name}</div>
-        <div className="flex gap-3">
-          <div className="text-white">Land Size ({unit}):</div>
-          <div className="text-app-main-100">{size}</div>
+        <div className="text-white text-sm xl:h-16 3xl:h-10">{name}</div>
+        <button
+          className="rounded-full px-2 bg-interaction w-44 text-white font-sans font-sm"
+          disabled
+        >
+          Kolor Alpha presale
+        </button>
+        <div className="flex flex-row justify-between gap-3">
+          <div className="text-gray-400">Land Size ({unit}):</div>
+          <div className="text-white">{size}</div>
         </div>
-        <div className="flex gap-3">
-          <div className="text-white">Country:</div>
-          <div className="text-app-main-100">{country}</div>
+        <div className="flex flex-row justify-between gap-3">
+          <div className="text-gray-400">Country:</div>
+          <div className="text-white">{country}</div>
         </div>
-        <div className="flex gap-3">
-          <div className="text-white">State or region:</div>
-          <div className="text-app-main-100">{stateOrRegion}</div>
+        <div className="flex flex-row justify-between gap-3">
+          <div className="text-gray-400">State or region:</div>
+          <div className="text-white">{stateOrRegion}</div>
         </div>
-        <div className="flex gap-3">
-          <div className="text-white">City:</div>
-          <div className="text-app-main-100">{city}</div>
+        <div className="flex flex-row justify-between gap-3">
+          <div className="text-gray-400">City:</div>
+          <div className="text-white">{city}</div>
         </div>
-        <div className="flex gap-3">
+        {/* <div className="flex gap-3">
           <div className="text-white">Species in this land:</div>
           <div className="text-app-main-100">{species.length}</div>
-        </div>
+        </div> */}
         <button
           className="border border-main px-6 py-1 rounded-full text-white hoverable-btn"
-          onClick={() => navigate(`/lands/${tokenId}`)}
+          onClick={() => navigate(`/lands/${tokenId}/buy`)}
         >
           Explore land
         </button>
+        <a
+          href="https://docs.google.com/document/d/1UZAdoSTh3Wzpo4ZWLRMJIL0SeiFcxAf_8fGhgkx73s4/edit?usp=sharing"
+          className="text-center rounded-full text-white bg-gray-500 px-2 text-xs w-full md:w-3/5 lg:w-4/5 mx-auto"
+          target="_blank"
+        >
+          Terms and conditions
+        </a>
       </div>
+      {/* )} */}
     </>
   );
 };
