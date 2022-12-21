@@ -1,6 +1,5 @@
 import Swal from "sweetalert2";
 import { fetchWithoutToken, fetchWithToken } from "../../../helpers/fetch";
-import { reset } from "../connection";
 import { resetDao } from "../dao/daoSlice";
 import { resetNFT, setLoginType } from "../NFT";
 import { resetToken } from "../token/tokenSlice";
@@ -68,7 +67,6 @@ export const signOut = () => {
   return (dispatch) => {
     localStorage.clear();
     dispatch(logout());
-    dispatch(reset());
     dispatch(resetNFT());
     dispatch(resetToken());
     dispatch(resetDao());

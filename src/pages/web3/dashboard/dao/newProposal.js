@@ -1,20 +1,36 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { useAccount, useSignMessage } from "wagmi";
 import { useForm } from "../../../../hooks/useForm";
 import { createProposalFromWallet } from "../../../../store/slices/dao";
 
 export const NewProposal = ({ tokenId }) => {
-  const { id } = useParams();
-
-  const { account, provider } = useSelector((state) => state.connection);
   const { creatingProposal } = useSelector((state) => state.dao);
+
+  const { id } = useParams();
+  const { address } = useAccount();
 
   const [formValues, handleInputChange, reset] = useForm({
     title: "",
     summary: "",
     discussion: "",
     duration: 2,
+  });
+
+  const { data, error, isLoading, signMessage } = useSignMessage({
+    onSuccess(data, variables) {
+      const proposalData = {
+        title,
+        summary,
+        options,
+        duration,
+        tokenId,
+      };
+      reset();
+      setOptions([]);
+      dispatch(createProposalFromWallet(address, proposalData, id, data));
+    },
   });
 
   const { title, summary, discussion, duration } = formValues;
@@ -46,7 +62,7 @@ export const NewProposal = ({ tokenId }) => {
     handleInputChange(e);
   };
 
-  const submitProposal = () => {
+  const submitProposal = async () => {
     if (title.length === 0) setTitleError(true);
     if (summary.length === 0) setSummaryError(true);
 
@@ -58,9 +74,7 @@ export const NewProposal = ({ tokenId }) => {
         duration,
         tokenId,
       };
-      reset();
-      setOptions([]);
-      dispatch(createProposalFromWallet(account, data, id, provider));
+      signMessage({ message: JSON.stringify(data) });
     }
   };
 

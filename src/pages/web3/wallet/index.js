@@ -11,6 +11,8 @@ import { useNavigate } from "react-router-dom";
 import DotLoader from "react-spinners/DotLoader";
 import "aos/dist/aos.css";
 import { getAssetsBalancesFromWallet } from "../../../store/slices/token/thunks";
+import { useAccount, useNetwork } from "wagmi";
+import { isValidNetwork } from "../../../utils/web3";
 
 const override = {
   margin: "0 auto",
@@ -18,23 +20,31 @@ const override = {
 };
 
 const Wallet = () => {
-  const { account, provider } = useSelector((state) => state.connection);
   const { balances, gettingBalances } = useSelector((state) => state.token);
-  const dispatch = useDispatch();
+
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
 
   const [copied, setCopied] = useState(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!balances) {
       console.log("getting balances");
-      dispatch(getAssetsBalancesFromWallet(account, provider));
+      dispatch(getAssetsBalancesFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
+
+  useEffect(() => {
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   const copyClipboard = () => {
-    navigator.clipboard.writeText(account);
+    navigator.clipboard.writeText(address);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);
@@ -42,7 +52,7 @@ const Wallet = () => {
   };
 
   const reloadFunds = () => {
-    dispatch(getAssetsBalancesFromWallet(account, provider));
+    dispatch(getAssetsBalancesFromWallet(address));
     navigate("/dashboard");
   };
 
@@ -89,7 +99,7 @@ const Wallet = () => {
                     )}
                   </button>
                 </div>
-                <p className="truncate text-white">{account}</p>
+                <p className="truncate text-white">{address}</p>
               </div>
             )}
 

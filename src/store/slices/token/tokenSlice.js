@@ -6,6 +6,7 @@ const initialState = {
   buying: false,
   balances: null,
   investments: null,
+  marketplaceAllowance: 0,
 };
 
 export const tokenSlice = createSlice({
@@ -27,6 +28,9 @@ export const tokenSlice = createSlice({
     setInvestments: (state, { payload }) => {
       state.investments = payload;
     },
+    setMarketplaceAllowance: (state, { payload }) => {
+      state.marketplaceAllowance = payload;
+    },
     resetToken: () => initialState,
   },
 });
@@ -37,5 +41,6 @@ export const {
   setBuying,
   setCheckingInvestments,
   setInvestments,
+  setMarketplaceAllowance,
   resetToken,
 } = tokenSlice.actions;

@@ -16,7 +16,21 @@ import {
   acquireLandTokensFromWallet,
   approveMarketplace,
   getAssetsBalancesFromWallet,
+  getInvestmentsFromWallet,
+  landTokensAcquired,
 } from "../../../store/slices/token/thunks";
+import { isValidNetwork } from "../../../utils/web3";
+import {
+  useAccount,
+  useContractWrite,
+  useNetwork,
+  usePrepareContractWrite,
+  useWaitForTransaction,
+} from "wagmi";
+import { ERC20Abi } from "../../../helpers/abis/ERC20";
+import { marketplaceAbi } from "../../../helpers/abis/marketplace";
+import { useDebounce } from "../../../hooks/useDebounce";
+import { BigNumber } from "ethers";
 
 const settings = {
   dots: true,
@@ -32,22 +46,25 @@ const override = {
 };
 
 const Buy = () => {
-  const { id } = useParams();
-
-  const dispatch = useDispatch();
   const { gettingNFT, publishedNFTs, NFT, NFTError, allNFTs } = useSelector(
     (state) => state.NFT
   );
 
-  const { balances, buying, gettingBalances } = useSelector(
-    (state) => state.token
-  );
+  const { balances, buying, gettingBalances, marketplaceAllowance } =
+    useSelector((state) => state.token);
 
-  const { account, provider, marketplaceAllowance } = useSelector(
-    (state) => state.connection
-  );
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
 
+  const { id } = useParams();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   useEffect(() => {
     if (!NFT) {
@@ -65,13 +82,13 @@ const Buy = () => {
         dispatch(getNFT(id));
       }
     }
-  }, [account]);
+  }, [address]);
 
   useEffect(() => {
     if (!balances) {
-      dispatch(getAssetsBalancesFromWallet(account, provider));
+      dispatch(getAssetsBalancesFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   useEffect(() => {
     AOS.init({ once: true });
@@ -87,19 +104,77 @@ const Buy = () => {
     console.log("tokens to buy: ", tokensToBuy);
   };
 
+  const debouncedTokenId = useDebounce(id, 500);
+  const debouncedAmount = useDebounce(tokensToBuy, 100);
+
+  const { config: cUSDConfig } = usePrepareContractWrite({
+    address: "0x765DE816845861e75A25fCA122bb6898B8B1282a",
+    abi: ERC20Abi,
+    functionName: "approve",
+    args: [
+      "0x4e3e9AC6B6AD04f29e47cEDDA5067D12473108A7",
+      BigNumber.from("43349837740420295665710040"),
+    ],
+  });
+
+  const {
+    data: approveData,
+    isLoading: isApproving,
+    write: approve,
+  } = useContractWrite(cUSDConfig);
+
+  const { config: marketplaceConfig } = usePrepareContractWrite({
+    address: "0x4e3e9AC6B6AD04f29e47cEDDA5067D12473108A7",
+    abi: marketplaceAbi,
+    functionName: "buyLandTokens",
+    args: [parseInt(debouncedTokenId), parseInt(debouncedAmount)],
+  });
+
+  let { isSuccess: approveSuccess } = useWaitForTransaction({
+    hash: approveData?.hash,
+  });
+
+  const {
+    data: buyData,
+    isLoading: isBuying,
+    write: buy,
+  } = useContractWrite(marketplaceConfig);
+
   const handleBuy = () => {
-    marketplaceAllowance > 0
-      ? dispatch(
-          acquireLandTokensFromWallet(
-            account,
-            NFT.tokenId,
-            tokensToBuy,
-            NFT.unit,
-            provider
-          )
-        )
-      : dispatch(approveMarketplace(account, provider));
+    if (marketplaceAllowance > 0) {
+      // console.log("marketplaceAllowance > 0: ", marketplaceAllowance);
+      buy?.();
+    } else {
+      // console.log("marketplaceAllowance <= 0: ", marketplaceAllowance);
+      approve?.();
+    }
   };
+
+  let { isSuccess: buySuccess } = useWaitForTransaction({
+    hash: buyData?.hash,
+  });
+
+  useEffect(() => {
+    console.log(
+      "approveSuccess: ",
+      approveSuccess,
+      " - buySuccess: ",
+      buySuccess
+    );
+
+    console.log("buy Data: ", buyData);
+
+    if (approveSuccess || buySuccess) {
+      buySuccess &&
+        dispatch(landTokensAcquired(tokensToBuy, NFT.unit, buyData?.hash));
+      dispatch(getNFT(id));
+      dispatch(getAssetsBalancesFromWallet(address));
+      dispatch(getInvestmentsFromWallet(address));
+
+      approveSuccess = false;
+      buySuccess = false;
+    }
+  }, [approveSuccess, buySuccess]);
 
   return (
     <>
@@ -122,62 +197,6 @@ const Buy = () => {
                 data-aos-duration="500"
               >
                 <Map land={NFT} />
-                {/* <div className="flex flex-col w-full border border-main rounded-3xl gap-4 px-4 py-4">
-                  <div className="xl:w-1/3 p-2">
-                    <Slider {...settings}>
-                      <img
-                        src={Placeholder}
-                        alt="placeholder"
-                        className="w-48"
-                      />
-                      <img src={costa} alt="costa" className="w-48" />
-                      <img src={parque} alt="parque" className="w-48" />
-                    </Slider>
-                  </div>
-                  <div className="text-app-dark-400 text-md">Land details</div>
-                  <div className="text-white text-sm">
-                    The <span className="text-app-main-100">{NFT.name}</span>{" "}
-                    land located in{" "}
-                    <span className="text-app-main-100">
-                      {NFT.city}, {NFT.stateOrRegion}, {NFT.country}
-                    </span>{" "}
-                    originally belonged to{" "}
-                    <span className="text-app-main-100">
-                      {NFT.landOwnerAlias}
-                    </span>{" "}
-                    and belongs to
-                    <span className="text-app-main-100">
-                      {" "}
-                      Kolor since {getDate(NFT.creationDate)}.
-                    </span>{" "}
-                    With a total size of{" "}
-                    <span className="text-app-main-100">
-                      {NFT.size} {NFT.unit}
-                    </span>{" "}
-                    is one of the featured lands in Kolor marketplace.
-                  </div>
-                  <div className="flex gap-4 justify-center">
-                    <div className="text-app-main-100 text-md">
-                      Conserve it now!
-                    </div>
-                  </div>
-                </div> */}
-                {/* <div className="flex flex-col bg-contact py-24 px-6 xl:px-12 gap-6 rounded-4xl">
-                  <div className="text-white text-sm">Looking to invest?</div>
-                  <div className="text-white">
-                    Suscribe now and start protecting Patagonia!
-                  </div>
-                  <div className="flex flex-col sm:flex-row md:flex-col xl:flex-row gap-6">
-                    <input
-                      type="text"
-                      placeholder="Email Address"
-                      className="w-full sm:w-2/3 md:w-full xl:w-2/3 input-contact py-4 px-4 rounded-3xl"
-                    />
-                    <button className="bg-white rounded-3xl px-8 py-4">
-                      Suscribe
-                    </button>
-                  </div>
-                </div> */}
               </div>
               {balances ? (
                 <div
@@ -236,11 +255,16 @@ const Buy = () => {
                           <button
                             onClick={handleBuy}
                             className="mx-6 bg-interaction rounded-xl text-white font-sans text-md mt-10 py-4 opacity-75 hover:opacity-100"
-                            disabled={buying}
+                            disabled={isApproving || isBuying}
                           >
-                            {marketplaceAllowance && marketplaceAllowance > 0
-                              ? "BUY"
-                              : "APPROVE"}
+                            {isApproving || isBuying ? (
+                              <p className="animate-ping">Loading...</p>
+                            ) : marketplaceAllowance &&
+                              marketplaceAllowance > 0 ? (
+                              "BUY"
+                            ) : (
+                              "APPROVE"
+                            )}
                           </button>
                         ) : (
                           <div className="text-center text-sm">
@@ -260,128 +284,6 @@ const Buy = () => {
                       </div>
                     )}
                   </div>
-                  {/* <div className="text-md text-white text-center">
-                    {Object.keys(balances).length > 0
-                      ? balances.landTokenBalances[NFT.tokenId] > 0
-                        ? "You're part of this land!"
-                        : "Be part of this land too!"
-                      : "Be part of this land too!"}
-                  </div>
-                  <div className="text-app-dark-400 text-center text-sm border-b border-white">
-                    {NFT.landTokenInfo.available} tokens available.
-                  </div>
-                  <div className="flex flex-col py-4 gap-4 items-center justify-center">
-                    <p>
-                      {balances.nativeBalances.cUSDBalance <
-                        tokensToBuy * NFT.landTokenInfo.tokenPrice || buying}
-                    </p>
-
-                    <div className="flex gap-4 h-10">
-                      {balances.nativeBalances.cUSDBalance >=
-                        tokensToBuy * NFT.landTokenInfo.tokenPrice &&
-                        NFT.landTokenInfo.available !== "0" && (
-                          <div
-                            onClick={handleBuy}
-                            className={`flex justify-center items-center cursor-pointer border border-main rounded-lg text-white px-4 h-10  ${
-                              balances.nativeBalances.cUSDBalance <
-                                tokensToBuy * NFT.landTokenInfo.tokenPrice ||
-                              (buying ? "disabled-btn" : "hoverable-btn")
-                            }`}
-                            disabled={
-                              balances.nativeBalances.cUSDBalance <
-                                tokensToBuy * NFT.landTokenInfo.tokenPrice ||
-                              buying
-                            }
-                          >
-                            Buy
-                          </div>
-                        )}
-
-                      <div className="flex justify-center w-full bg-gradient rounded-lg h-10">
-                        <input
-                          type="number"
-                          min={NFT.landTokenInfo.available !== "0" ? 1 : 0}
-                          value={tokensToBuy}
-                          className="w-full items-center input-value"
-                          onChange={(e) => handleChanged(e)}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-app-dark-400">
-                      Land token at a price of{" "}
-                      <span className="text-white">
-                        {NFT.landTokenInfo.tokenPrice} $cUSD
-                      </span>
-                    </div>
-
-                    {balances.nativeBalances.cUSDBalance <
-                    tokensToBuy * NFT.landTokenInfo.tokenPrice ? (
-                      <div className="text-app-dark-400">
-                        <p className="text-center text-app-red">
-                          Not enough funds!
-                        </p>
-                        <button
-                          className="border border-main rounded-full text-white py-2 px-6 mt-2 hoverable-btn"
-                          onClick={handleNavigate}
-                        >
-                          Deposit now over CELO network!
-                        </button>
-                        <p className="text-center"></p>
-                      </div>
-                    ) : (
-                      <p></p>
-                    )}
-
-                    {/* <div className="text-app-dark-400">
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount <
-                        0.25 && (
-                        <p>
-                          Looks like you're early. Get your land tokens now
-                          {NFT.landTokenInfo.totalHolders > 0 &&
-                            ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                          !
-                        </p>
-                      )}
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount <
-                        0.75 &&
-                        NFT.landTokenInfo.sold /
-                          NFT.landTokenInfo.currentAmount >
-                          0.25 && (
-                          <p>
-                            This land is at its peak point. Get your land tokens
-                            now
-                            {NFT.landTokenInfo.totalHolders > 0 &&
-                              ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                            !
-                          </p>
-                        )}
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount >
-                        0.75 &&
-                        NFT.landTokenInfo.available !== "0" && (
-                          <p>
-                            Hurry up, this land is selling out! Get your land
-                            tokens now
-                            {NFT.landTokenInfo.totalHolders > 0 &&
-                              ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                            !
-                          </p>
-                        )}
-                      {NFT.landTokenInfo.available === "0" && (
-                        <p className="text-red-600">This land has sold out!</p>
-                      )}
-                    </div> */}
-                  {/* <button
-                      className="border border-main w-3/4 text-white py-2 "
-                      disabled
-                    >
-                      {NFT.landTokenInfo.totalHolders === 0
-                        ? "Be the first holder of this land!"
-                        : `There are ${NFT.landTokenInfo.totalHolders} holders already!`}
-                    </button> */}
-                  {/* </div> */}
                 </div>
               ) : (
                 <h1>""</h1>

@@ -10,6 +10,7 @@ import {
   getInvestmentsFromWallet,
 } from "../../../../store/slices/token/thunks";
 import { getPublishedNFTs } from "../../../../store/slices/NFT";
+import { useAccount } from "wagmi";
 
 const override = {
   margin: "0 auto",
@@ -24,13 +25,13 @@ export const Dao = () => {
     (state) => state.NFT
   );
 
-  const { account, provider } = useSelector((state) => state.connection);
+  const { address } = useAccount();
 
   useEffect(() => {
     if (!investments && !checkingInvestments) {
-      dispatch(getInvestmentsFromWallet(account, provider));
+      dispatch(getInvestmentsFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   useEffect(() => {
     // if all lands not fetched yet dispatch fetch action
@@ -49,13 +50,13 @@ export const Dao = () => {
 
   useEffect(() => {
     if (!balances) {
-      dispatch(getAssetsBalancesFromWallet(account, provider));
+      dispatch(getAssetsBalancesFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   return (
     <>
-      {gettingPublishedNFTs ? (
+      {gettingPublishedNFTs || gettingBalances ? (
         <DotLoader
           color="rgba(91, 230, 202, 0.84)"
           loading={gettingPublishedNFTs}

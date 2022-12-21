@@ -6,8 +6,8 @@ import { ERC20Abi } from "../abis/ERC20";
 const cUSDAddress = "0x765DE816845861e75A25fCA122bb6898B8B1282a"; //mainnet
 const marketplaceAddress = "0x4e3e9AC6B6AD04f29e47cEDDA5067D12473108A7"; //mainnet
 
-export const getcUSDBalanceFromWallet = async (address, provider) => {
-  const web3 = new Web3(provider);
+export const getcUSDBalanceFromWallet = async (address) => {
+  const web3 = new Web3("https://forno.celo.org");
   const cUSD = createERC20Contract(web3, cUSDAddress);
 
   const balance = await cUSD.methods.balanceOf(address).call();
@@ -22,8 +22,8 @@ export const getcUSDBalanceFromWallet = async (address, provider) => {
   return roundValue(balanceInEth, 5);
 };
 
-export const getAllowance = async (account, provider) => {
-  const web3 = new Web3(provider);
+export const getAllowance = async (account) => {
+  const web3 = new Web3("https://forno.celo.org");
   const cUSD = createERC20Contract(web3, cUSDAddress);
 
   const allowance = await cUSD.methods
@@ -35,7 +35,7 @@ export const getAllowance = async (account, provider) => {
 };
 
 export const approve = async (account, provider) => {
-  const web3 = new Web3(provider);
+  const web3 = new Web3("provider");
   const cUSD = createERC20Contract(web3, cUSDAddress);
 
   const totalSupply = await cUSD.methods.totalSupply().call();

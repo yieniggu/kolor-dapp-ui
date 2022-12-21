@@ -1,4 +1,6 @@
 import fromExponential from "from-exponential";
+import { networkInterfaces } from "os";
+import { networks } from "./supportedChains";
 
 export const oneYearInSeconds = 31536000;
 
@@ -188,4 +190,8 @@ export const getDate = (dateInTimestamp) => {
   const date = new Date(dateInTimestamp * 1000);
 
   return date.toLocaleString();
+};
+
+export const isValidNetwork = (chainId) => {
+  return networks.some(({ id }) => id == chainId);
 };

@@ -4,10 +4,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import IcoMenu from "../../../assets/icons/ico_menu.svg";
 import LogoIcon from "../../../assets/logo/logo_icon.png";
 import Logo from "../../../assets/logo/logo.png";
-import { resetConnector } from "../../../store/slices/connection";
+import { useAccount, useDisconnect } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const Header = () => {
-  const { account } = useSelector((state) => state.connection);
+  // const { account } = useSelector((state) => state.connection);
+  const { address, isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
 
   const [openMenu, setOpenMenu] = useState(false);
 
@@ -16,9 +19,11 @@ const Header = () => {
   const dispatch = useDispatch();
 
   const handleSignin = () => {
-    if (account) {
-      dispatch(resetConnector());
+    if (address) {
+      disconnect();
       navigate("/");
+    } else {
+      navigate("/signin");
     }
   };
   return (
@@ -48,17 +53,7 @@ const Header = () => {
           />
           <img src={Logo} alt="logo" className="w-16 md:w-20 xl:w-24" />
         </div>
-        {location.pathname !== "/signin" && account && (
-          <button
-            className={`justify-center items-center hidden sm:block border border-white h-12 text-white rounded-full px-6 font-bold cursor-pointer hoverable-btn ${
-              !account && "hidden"
-            }`}
-            onClick={() => handleSignin()}
-          >
-            {account &&
-              `${account.substr(0, 6)}...${account.substr(32, account.length)}`}
-          </button>
-        )}
+        {location.pathname !== "/signin" && <ConnectButton />}
 
         <div className="flex md:hidden" onClick={() => setOpenMenu(!openMenu)}>
           <img src={IcoMenu} alt="menu" />
@@ -76,7 +71,7 @@ const Header = () => {
           </div>
           <div className="w-full flex justify-center flex-col items-center gap-20 pt-10">
             <div className="flex gap-14 flex-col">
-              {!!account && (
+              {!!address && (
                 <div
                   className="font-sorasemibold cursor-pointer text-white my-4"
                   onClick={() => navigate("/dashboard")}
@@ -90,7 +85,7 @@ const Header = () => {
               >
                 Marketplace
               </div>
-              {!!account && (
+              {!!address && (
                 <div
                   className="font-sorasemibold cursor-pointer text-white my-4"
                   onClick={() => navigate("/wallet")}
@@ -102,7 +97,7 @@ const Header = () => {
                 className="font-sorasemibold cursor-pointer text-white my-4"
                 onClick={handleSignin}
               >
-                {account ? "Disconnect" : "Connect"}
+                {address ? "Disconnect" : "Connect"}
               </div>
             </div>
           </div>

@@ -12,6 +12,7 @@ import {
   getAssetsBalancesFromWallet,
   getInvestmentsFromWallet,
 } from "../../../../store/slices/token/thunks";
+import { useAccount } from "wagmi";
 
 const override = {
   margin: "0 auto",
@@ -22,13 +23,13 @@ export const Portfolio = () => {
   const { balances, gettingBalances, checkingInvestments, investments } =
     useSelector((state) => state.token);
 
-  const { account, provider } = useSelector((state) => state.connection);
+  const { address } = useAccount();
 
   useEffect(() => {
     if (!investments) {
-      dispatch(getInvestmentsFromWallet(account, provider));
+      dispatch(getInvestmentsFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   useEffect(() => {
     AOS.init({ once: true });
@@ -39,9 +40,9 @@ export const Portfolio = () => {
 
   useEffect(() => {
     if (!balances) {
-      dispatch(getAssetsBalancesFromWallet(account, provider));
+      dispatch(getAssetsBalancesFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   return (
     <>
@@ -125,8 +126,8 @@ export const Portfolio = () => {
               <div className="flex flex-row justify-center gap-4">
                 <img className="w-10 my-auto" src={LogoIcon} />
                 <p className="text-white my-auto text-sm">
-                  {account.substring(0, 5)}...
-                  {account.substring(36)}
+                  {address.substring(0, 5)}...
+                  {address.substring(36)}
                 </p>
               </div>
               <h1 className="text-center text-lg text-white font-sans">

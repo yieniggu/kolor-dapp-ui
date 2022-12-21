@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { getPublishedNFTs } from "../../../store/slices/NFT";
 import { Navigate, useNavigate } from "react-router-dom";
+import { useAccount, useNetwork } from "wagmi";
+import { isValidNetwork } from "../../../utils/web3";
 
 const override = {
   margin: "0 auto",
@@ -14,13 +16,13 @@ const override = {
 };
 
 const Marketplace = () => {
-  const dispatch = useDispatch();
-
-  const { account } = useSelector((state) => state.connection);
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
   const { landsFirstFetch, gettingPublishedNFTs, publishedNFTs } = useSelector(
     (state) => state.NFT
   );
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,8 +34,10 @@ const Marketplace = () => {
   }, []);
 
   useEffect(() => {
-    !account && navigate("/signin");
-  }, [account]);
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   return (
     <>

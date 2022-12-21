@@ -5,8 +5,11 @@ import {
   getLandTokenBalanceFromWallet,
 } from "../../../helpers/web3/landToken";
 import { buyLandTokens } from "../../../helpers/web3/marketplace";
-import { approve, getcUSDBalanceFromWallet } from "../../../helpers/web3/token";
-import { setMarketplaceAllowance } from "../connection";
+import {
+  approve,
+  getAllowance,
+  getcUSDBalanceFromWallet,
+} from "../../../helpers/web3/token";
 import { getNFT } from "../NFT";
 import { openModal } from "../UI/uiSlice";
 import {
@@ -15,6 +18,7 @@ import {
   setCheckingInvestments,
   setGettingBalances,
   setInvestments,
+  setMarketplaceAllowance,
 } from "./tokenSlice";
 
 export const getAssetsBalances = (uid) => {
@@ -92,17 +96,14 @@ export const getInvestments = (uid) => {
   };
 };
 
-export const getAssetsBalancesFromWallet = (address, provider) => {
+export const getAssetsBalancesFromWallet = (address) => {
   return async (dispatch) => {
     dispatch(setGettingBalances(true));
-    console.log("provider: ", provider);
 
     try {
-      const landTokenBalances = await getLandTokenBalanceFromWallet(
-        address,
-        provider
-      );
-      const cUSDBalance = await getcUSDBalanceFromWallet(address, provider);
+      const landTokenBalances = await getLandTokenBalanceFromWallet(address);
+      const cUSDBalance = await getcUSDBalanceFromWallet(address);
+      const marketplaceAllowance = await getAllowance(address);
 
       const balances = {
         landTokenBalances,
@@ -112,6 +113,7 @@ export const getAssetsBalancesFromWallet = (address, provider) => {
       };
 
       dispatch(setBalances(balances));
+      dispatch(setMarketplaceAllowance(marketplaceAllowance));
       dispatch(setGettingBalances(false));
     } catch (e) {
       console.error(e);
@@ -121,11 +123,11 @@ export const getAssetsBalancesFromWallet = (address, provider) => {
   };
 };
 
-export const getInvestmentsFromWallet = (address, provider) => {
+export const getInvestmentsFromWallet = (address) => {
   return async (dispatch) => {
     dispatch(setCheckingInvestments(true));
 
-    const investments = await getInvestmentsOf(address, provider);
+    const investments = await getInvestmentsOf(address);
 
     try {
       dispatch(setInvestments(investments));
@@ -137,41 +139,25 @@ export const getInvestmentsFromWallet = (address, provider) => {
   };
 };
 
-export const acquireLandTokensFromWallet = (
-  account,
-  tokenId,
-  amount,
-  unit,
-  provider
-) => {
+export const landTokensAcquired = (amount, unit, receipt) => {
   return async (dispatch) => {
-    dispatch(setBuying(true));
+    const title = `You are now protecting ${amount} ${unit} in Patagonia!`;
+    const subtitle = "For further notice, check transaction in explorer:";
 
-    try {
-      const receipt = await buyLandTokens(account, tokenId, amount, provider);
-      dispatch(setBuying(false));
-      const title = `You are now protecting ${amount} ${unit} in Patagonia!`;
-      const subtitle = "For further notice, check transaction in explorer:";
+    dispatch(
+      openModal({
+        type: "acquireSuccess",
+        title,
+        subtitle,
+        body: [{ transaction: "New Investment", receipt }],
+      })
+    );
 
-      dispatch(
-        openModal({
-          type: "acquireSuccess",
-          title,
-          subtitle,
-          body: [{ transaction: "New Investment", receipt }],
-        })
-      );
-
-      setTimeout(() => {
-        dispatch(getNFT(tokenId));
-        dispatch(getAssetsBalancesFromWallet(account, provider));
-        dispatch(getInvestmentsFromWallet(account, provider));
-      }, 2000);
-    } catch (e) {
-      console.error(e);
-      Swal.fire("Error", "Something went wrong =(", "error");
-      dispatch(setBuying(false));
-    }
+    // setTimeout(() => {
+    //   dispatch(getNFT(tokenId));
+    //   dispatch(getAssetsBalancesFromWallet(account, provider));
+    //   dispatch(getInvestmentsFromWallet(account, provider));
+    // }, 2000);
   };
 };
 

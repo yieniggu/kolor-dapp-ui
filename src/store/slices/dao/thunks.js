@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import { fetchWithoutToken, fetchWithToken } from "../../../helpers/fetch";
 import { requestSignature } from "../../../helpers/web3/common";
+import { getAvailableVotingPower } from "../../../helpers/web3/landToken";
 import {
   setCreatingProposal,
   setDao,
@@ -8,7 +9,7 @@ import {
   setIsVoting,
 } from "./daoSlice";
 
-export const getProposals = (daoId) => {
+export const getProposals = (daoId, address) => {
   return async (dispatch) => {
     dispatch(setGettingProposals(true));
 
@@ -16,7 +17,9 @@ export const getProposals = (daoId) => {
     const body = await res.json();
     console.log("proposals: ", body);
 
-    dispatch(setDao({ daoId, proposals: body.proposals }));
+    const proposals = await setVotingPower(body.proposals, address);
+
+    dispatch(setDao({ daoId, proposals: proposals }));
     dispatch(setGettingProposals(false));
   };
 };
@@ -39,19 +42,15 @@ export const createProposal = (data, daoId) => {
   };
 };
 
-export const createProposalFromWallet = (account, data, daoId, provider) => {
+export const createProposalFromWallet = (account, data, daoId, signature) => {
   return async (dispatch) => {
     dispatch(setCreatingProposal(true));
 
     try {
       console.log("account: ", account);
       console.log("data: ", data);
-      // get signature
-      const signature = await requestSignature(
-        account,
-        JSON.stringify(data),
-        provider
-      );
+      console.log("signature: ", signature);
+
       data.stringified = JSON.stringify(data);
       data.signature = signature;
       data.address = account;
@@ -65,7 +64,7 @@ export const createProposalFromWallet = (account, data, daoId, provider) => {
       const body = await res.json();
 
       if (body.ok) {
-        dispatch(getProposals(daoId));
+        dispatch(getProposals(daoId, account));
       } else {
         Swal.fire("Error", "Something went wrong =(", "error");
       }
@@ -76,9 +75,6 @@ export const createProposalFromWallet = (account, data, daoId, provider) => {
       Swal.fire("Error", "Something went wrong =(", "error");
       dispatch(setCreatingProposal(false));
     }
-    // get signature
-
-    // verify
   };
 };
 
@@ -100,18 +96,11 @@ export const castVote = (data, daoId, proposalId) => {
   };
 };
 
-export const castVoteFromWallet = (data, provider) => {
+export const castVoteFromWallet = (data, signature) => {
   return async (dispatch) => {
     dispatch(setIsVoting(true));
 
     const { address, daoId, proposalId } = data;
-
-    // sign message
-    const signature = await requestSignature(
-      address,
-      JSON.stringify(data),
-      provider
-    );
 
     data.stringified = JSON.stringify(data);
     data.signature = signature;
@@ -127,11 +116,31 @@ export const castVoteFromWallet = (data, provider) => {
     if (body.ok) {
       console.log("vote casted: ", body.result);
       dispatch(setIsVoting(false));
-      dispatch(getProposals(daoId));
+      dispatch(getProposals(daoId, address));
     } else {
       console.log(body);
       dispatch(setIsVoting(false));
       Swal.fire("Error", "Something went wrong =(", "error");
     }
   };
+};
+
+const setVotingPower = async (proposals, address) => {
+  let proposalsWithPower = [];
+  // traverse all proposals
+  for (let proposal of proposals) {
+    const { tokenId, block } = proposal;
+    const availableVotingPower = await getAvailableVotingPower(
+      address,
+      tokenId,
+      block
+    );
+
+    // console.log("availableVotingPower: ", availableVotingPower);
+    proposal.availableVotingPower = availableVotingPower;
+    // console.log("proposal: ", proposal);
+    proposalsWithPower.push(proposal);
+  }
+
+  return proposalsWithPower;
 };

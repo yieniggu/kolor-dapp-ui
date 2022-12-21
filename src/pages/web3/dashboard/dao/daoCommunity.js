@@ -13,6 +13,7 @@ import {
   getInvestmentsFromWallet,
 } from "../../../../store/slices/token/thunks";
 import { getPublishedNFTs } from "../../../../store/slices/NFT";
+import { useAccount } from "wagmi";
 
 const override = {
   margin: "0 auto",
@@ -20,9 +21,6 @@ const override = {
 };
 
 export const DaoCommunity = () => {
-  const { id } = useParams();
-  const { account, provider } = useSelector((state) => state.connection);
-
   const { balances, gettingBalances, checkingInvestments, investments } =
     useSelector((state) => state.token);
 
@@ -30,7 +28,9 @@ export const DaoCommunity = () => {
     (state) => state.NFT
   );
 
-  const {} = useSelector((state) => state.token);
+  const { id } = useParams();
+
+  const { address } = useAccount();
 
   const [token, setToken] = useState(null);
   const [selected, setSelected] = useState("proposals");
@@ -45,9 +45,9 @@ export const DaoCommunity = () => {
 
   useEffect(() => {
     if (!investments && !checkingInvestments) {
-      dispatch(getInvestmentsFromWallet(account, provider));
+      dispatch(getInvestmentsFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   useEffect(() => {
     // if all lands not fetched yet dispatch fetch action
@@ -65,9 +65,9 @@ export const DaoCommunity = () => {
 
   useEffect(() => {
     if (!balances) {
-      dispatch(getAssetsBalancesFromWallet(account, provider));
+      dispatch(getAssetsBalancesFromWallet(address));
     }
-  }, [account]);
+  }, [address]);
 
   const select = ({ target }) => {
     setSelected(target.getAttribute("name"));

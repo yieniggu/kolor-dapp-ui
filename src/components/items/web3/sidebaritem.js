@@ -1,16 +1,19 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useAccount } from "wagmi";
 
 const SideBarItem = ({ icon, title, link }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { account } = useSelector((state) => state.connection);
+  // const { account } = useSelector((state) => state.connection);
+  const { address, isConnected } = useAccount();
 
   return (
     <>
       {title === "Dashboard" ? (
-        !!account && (
+        address &&
+        isConnected && (
           <div
             className={`flex items-center cursor-pointer ${
               location.pathname === link && "bg-gradient"

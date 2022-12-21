@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { DotLoader } from "react-spinners";
+import { useAccount, useSignMessage } from "wagmi";
 import SideBar from "../../../../components/sidebar/web3";
 import Layout from "../../../../layout/web3";
 import { castVoteFromWallet, getProposals } from "../../../../store/slices/dao";
@@ -13,7 +14,15 @@ const override = {
 };
 
 export const Proposal = () => {
+  const { publishedNFTs } = useSelector((state) => state.NFT);
+  const { balances } = useSelector((state) => state.token);
+  const { proposals, daoId, gettingProposals, isVoting } = useSelector(
+    (state) => state.dao
+  );
+
+  const { address } = useAccount();
   const { id, proposal: proposalId } = useParams();
+  const dispatch = useDispatch();
 
   const [proposal, setProposal] = useState(null);
   const [votes, setVotes] = useState([0, 0, 0]);
@@ -21,15 +30,12 @@ export const Proposal = () => {
   const [hasVoted, setHasVoted] = useState(false);
   const [selectedOption, setSelectedOption] = useState(0);
 
-  const { proposals, daoId, gettingProposals, isVoting } = useSelector(
-    (state) => state.dao
-  );
-
-  const { account, provider } = useSelector((state) => state.connection);
-  const { publishedNFTs } = useSelector((state) => state.NFT);
-  const { balances } = useSelector((state) => state.token);
-
-  const dispatch = useDispatch();
+  const { data, error, isLoading, signMessage } = useSignMessage({
+    onSuccess(data, variables) {
+      console.log(data, variables);
+      dispatch(castVoteFromWallet(JSON.parse(variables.message), data));
+    },
+  });
 
   useEffect(() => {
     if (daoId && daoId === id) {
@@ -46,14 +52,14 @@ export const Proposal = () => {
       countVotes();
       const { votes } = proposal;
       const userVote = votes.find(
-        ({ address: authorAddress }) => authorAddress.toLowerCase() === account
+        ({ address: authorAddress }) => authorAddress.toLowerCase() === address
       );
 
       console.log(userVote);
       userVote ? setHasVoted(true) : setHasVoted(false);
       console.log(hasVoted);
     }
-  }, [proposal, account]);
+  }, [proposal, address]);
 
   const countVotes = () => {
     let votes = [0, 0, 0];
@@ -75,19 +81,16 @@ export const Proposal = () => {
 
   const sendVote = () => {
     console.log(selectedOption, id, proposalId);
-    dispatch(
-      castVoteFromWallet(
-        {
-          address: account,
-          votes: balances.landTokenBalances[proposal.tokenId],
-          option: selectedOption,
-          daoId,
-          proposalId,
-          voteDate: new Date(),
-        },
-        provider
-      )
-    );
+    const voteData = {
+      address,
+      votes: proposal.availableVotingPower,
+      option: selectedOption,
+      daoId,
+      proposalId,
+      voteDate: new Date(),
+    };
+
+    signMessage({ message: JSON.stringify(voteData) });
   };
 
   return (
@@ -174,6 +177,17 @@ export const Proposal = () => {
                           {new Date(proposal.endDate).toLocaleString()}
                         </p>
                       </div>
+                      <div className="flex flex-col xl:flex-row justify-between font-medium mt-4">
+                        <p className="w-1/2 text-gray-400">Reference Block</p>
+                        <p className="w-1/2">
+                          <a
+                            href={`https://explorer.celo.org/mainnet/block/${proposal.block}/transactions`}
+                            target="_blank"
+                          >
+                            {proposal.block}
+                          </a>
+                        </p>
+                      </div>
                     </div>
                     <div className="flex flex-col w-full mx-auto mt-10">
                       <div className="flex flex-col rounded-lg border border-gray-400 px-4 pb-4">
@@ -211,7 +225,7 @@ export const Proposal = () => {
                           <p className="mt-4 text-sm text-end">
                             You have already voted!
                           </p>
-                        ) : (
+                        ) : proposal.availableVotingPower > 0 ? (
                           <div className="flex flex-row justify-between mt-4">
                             <Dropdown
                               options={proposal.options}
@@ -221,6 +235,7 @@ export const Proposal = () => {
                             <button
                               className="rounded-lg w-40 py-1 bg-interaction bg-opacity-75 hover:bg-opacity-100"
                               onClick={sendVote}
+                              disabled={isVoting}
                             >
                               {isVoting ? (
                                 <p className="animate-ping">Please wait</p>
@@ -229,8 +244,13 @@ export const Proposal = () => {
                               )}
                             </button>
                           </div>
+                        ) : (
+                          <p className="text-red-500">
+                            Your voting power at block {proposal.block} is not
+                            enough!
+                          </p>
                         )}
-                        {!hasVoted && (
+                        {!hasVoted && proposal.availableVotingPower > 0 && (
                           <p className="text-red-500 ml-auto">
                             Votes cannot be changed
                           </p>

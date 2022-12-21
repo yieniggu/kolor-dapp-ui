@@ -16,6 +16,9 @@ import Dashboard from "../pages/web3/dashboard";
 import { AppModal } from "../components/modal/web3";
 import { DaoCommunity } from "../pages/web3/dashboard/dao/daoCommunity";
 import { Proposal } from "../pages/web3/dashboard/dao/proposal";
+import { WagmiConfig } from "wagmi";
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { chains, wagmiClient } from "../utils/web3/rainbowConfig";
 
 const override = {
   background: "-webkit-linear-gradient(75deg, #41a58d, #eee)",
@@ -23,31 +26,30 @@ const override = {
 
 const Web3Pages = () => {
   const { loginType } = useSelector((state) => state.NFT);
-  const { account } = useSelector((state) => state.connection);
 
   return (
     <div>
       <AppModal />
 
-      <Routes>
-        <Route path="/signin" element={<SignIn />} />
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider chains={chains}>
+          <Routes>
+            <Route path="/signin" element={<SignIn />} />
 
-        <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
 
-        <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/marketplace" element={<Marketplace />} />
 
-        <Route path="lands/:id/buy" element={<Buy />} />
+            <Route path="lands/:id/buy" element={<Buy />} />
 
-        <Route path="/wallet" element={<Wallet />} />
+            <Route path="/wallet" element={<Wallet />} />
 
-        <Route path="/dao/:id" element={<DaoCommunity />} />
+            <Route path="/dao/:id" element={<DaoCommunity />} />
 
-        <Route path="/dao/:id/proposals/:proposal" element={<Proposal />} />
-
-        {loginType && account && (
-          <Route path="/*" element={<Navigate to="/marketplace" />} />
-        )}
-      </Routes>
+            <Route path="/dao/:id/proposals/:proposal" element={<Proposal />} />
+          </Routes>
+        </RainbowKitProvider>
+      </WagmiConfig>
     </div>
   );
 };
