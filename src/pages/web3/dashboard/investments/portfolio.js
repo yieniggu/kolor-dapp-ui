@@ -104,7 +104,7 @@ export const Portfolio = () => {
             </div>
             <button
               onClick={() =>
-                navigate(`/lands/${investments[investments.length - 1][0]}`)
+                navigate(`/lands/${investments[investments.length - 1][0]}/buy`)
               }
               className="rounded-full h-12 px-4 py-2 border border-main text-white w-40 hoverable-btn"
             >

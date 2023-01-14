@@ -63,7 +63,7 @@ const InvestmentItem = ({ investment, index }) => {
           </div>
           <div
             className="flex cursor-pointer text-app-dark-400 items-center justify-center py-3 hoverable-btn"
-            onClick={() => navigate(`/lands/${investment[0]}`)}
+            onClick={() => navigate(`/lands/${investment[0]}/buy`)}
           >
             Explore Land
           </div>

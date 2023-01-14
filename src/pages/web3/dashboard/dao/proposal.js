@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { DotLoader } from "react-spinners";
-import { useAccount, useSignMessage } from "wagmi";
+import { useAccount, useNetwork, useSignMessage } from "wagmi";
 import SideBar from "../../../../components/sidebar/web3";
 import Layout from "../../../../layout/web3";
 import { castVoteFromWallet, getProposals } from "../../../../store/slices/dao";
+import { isValidNetwork } from "../../../../utils/web3";
 import { Dropdown } from "./optionsDropdown";
 
 const override = {
@@ -20,9 +21,12 @@ export const Proposal = () => {
     (state) => state.dao
   );
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
+
   const { id, proposal: proposalId } = useParams();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [proposal, setProposal] = useState(null);
   const [votes, setVotes] = useState([0, 0, 0]);
@@ -48,18 +52,25 @@ export const Proposal = () => {
   }, [daoId, proposals]);
 
   useEffect(() => {
-    if (proposal) {
+    if (proposal && address) {
       countVotes();
       const { votes } = proposal;
       const userVote = votes.find(
-        ({ address: authorAddress }) => authorAddress.toLowerCase() === address
+        ({ address: authorAddress }) =>
+          authorAddress.toLowerCase() === address.toLowerCase()
       );
 
-      console.log(userVote);
+      console.log("userVote: ", userVote);
       userVote ? setHasVoted(true) : setHasVoted(false);
-      console.log(hasVoted);
+      console.log("hasVoted: ", hasVoted);
     }
   }, [proposal, address]);
+
+  useEffect(() => {
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   const countVotes = () => {
     let votes = [0, 0, 0];

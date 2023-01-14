@@ -20,6 +20,7 @@ const celo = {
       url: "https://explorer.celo.org/mainnet/",
     },
   },
+  iconUrls: ["https://i.ibb.co/6tQ2vdv/celo-logo.png"],
 };
 
 export const { chains, provider } = configureChains(

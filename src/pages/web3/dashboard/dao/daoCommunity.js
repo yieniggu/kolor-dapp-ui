@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AOS from "aos";
 import SideBar from "../../../../components/sidebar/web3";
 import Layout from "../../../../layout/web3";
@@ -13,7 +13,8 @@ import {
   getInvestmentsFromWallet,
 } from "../../../../store/slices/token/thunks";
 import { getPublishedNFTs } from "../../../../store/slices/NFT";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
+import { isValidNetwork } from "../../../../utils/web3";
 
 const override = {
   margin: "0 auto",
@@ -29,8 +30,10 @@ export const DaoCommunity = () => {
   );
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
 
   const [token, setToken] = useState(null);
   const [selected, setSelected] = useState("proposals");
@@ -68,6 +71,12 @@ export const DaoCommunity = () => {
       dispatch(getAssetsBalancesFromWallet(address));
     }
   }, [address]);
+
+  useEffect(() => {
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   const select = ({ target }) => {
     setSelected(target.getAttribute("name"));
