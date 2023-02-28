@@ -10,7 +10,7 @@ import DotLoader from "react-spinners/DotLoader";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
-import { Modal } from "../../../components/modal/web2";
+import { AppModal } from "../../../components/modal/web2";
 import { Map } from "../../../components/map";
 import { getNFT, setGettingNFT, setNFT } from "../../../store/slices/NFT";
 import {
@@ -91,7 +91,7 @@ const Buy = () => {
 
   return (
     <>
-      <Modal />
+      <AppModal />
       <Layout title="Kolor | Buy LandTokens">
         <div className="flex gap-8 lg:gap-12 xl:gap-16 bg-dashboard min-h-screen w-full">
           <SideBar />
@@ -222,9 +222,26 @@ const Buy = () => {
                         </div>
                         <button
                           onClick={handleBuy}
-                          className="mx-6 bg-interaction rounded-xl text-white font-sans text-md mt-10 py-4 opacity-75 hover:opacity-100"
+                          className={`mx-6 rounded-xl text-white font-sans text-md mt-10 py-4 opacity-75  ${
+                            tokensToBuy * NFT.landTokenInfo.tokenPrice >
+                            balances.nativeBalances.cUSDBalance
+                              ? "bg-red-500"
+                              : "bg-interaction hover:opacity-100"
+                          }`}
+                          disabled={
+                            buying ||
+                            tokensToBuy * NFT.landTokenInfo.tokenPrice >
+                              balances.nativeBalances.cUSDBalance
+                          }
                         >
-                          BUY
+                          {buying ? (
+                            <p className="animate-ping">Loading...</p>
+                          ) : tokensToBuy * NFT.landTokenInfo.tokenPrice >
+                            balances.nativeBalances.cUSDBalance ? (
+                            "NOT ENOUGH BALANCE"
+                          ) : (
+                            "BUY"
+                          )}
                         </button>
                         <p className="text-center text-gray-500 mt-2 text-xs font-sans text-opacity-75">
                           Land token at a price of{" "}
@@ -233,128 +250,6 @@ const Buy = () => {
                       </div>
                     )}
                   </div>
-                  {/* <div className="text-md text-white text-center">
-                    {Object.keys(balances).length > 0
-                      ? balances.landTokenBalances[NFT.tokenId] > 0
-                        ? "You're part of this land!"
-                        : "Be part of this land too!"
-                      : "Be part of this land too!"}
-                  </div>
-                  <div className="text-app-dark-400 text-center text-sm border-b border-white">
-                    {NFT.landTokenInfo.available} tokens available.
-                  </div>
-                  <div className="flex flex-col py-4 gap-4 items-center justify-center">
-                    <p>
-                      {balances.nativeBalances.cUSDBalance <
-                        tokensToBuy * NFT.landTokenInfo.tokenPrice || buying}
-                    </p>
-
-                    <div className="flex gap-4 h-10">
-                      {balances.nativeBalances.cUSDBalance >=
-                        tokensToBuy * NFT.landTokenInfo.tokenPrice &&
-                        NFT.landTokenInfo.available !== "0" && (
-                          <div
-                            onClick={handleBuy}
-                            className={`flex justify-center items-center cursor-pointer border border-main rounded-lg text-white px-4 h-10  ${
-                              balances.nativeBalances.cUSDBalance <
-                                tokensToBuy * NFT.landTokenInfo.tokenPrice ||
-                              (buying ? "disabled-btn" : "hoverable-btn")
-                            }`}
-                            disabled={
-                              balances.nativeBalances.cUSDBalance <
-                                tokensToBuy * NFT.landTokenInfo.tokenPrice ||
-                              buying
-                            }
-                          >
-                            Buy
-                          </div>
-                        )}
-
-                      <div className="flex justify-center w-full bg-gradient rounded-lg h-10">
-                        <input
-                          type="number"
-                          min={NFT.landTokenInfo.available !== "0" ? 1 : 0}
-                          value={tokensToBuy}
-                          className="w-full items-center input-value"
-                          onChange={(e) => handleChanged(e)}
-                        />
-                      </div>
-                    </div>
-                    <div className="text-app-dark-400">
-                      Land token at a price of{" "}
-                      <span className="text-white">
-                        {NFT.landTokenInfo.tokenPrice} $cUSD
-                      </span>
-                    </div>
-
-                    {balances.nativeBalances.cUSDBalance <
-                    tokensToBuy * NFT.landTokenInfo.tokenPrice ? (
-                      <div className="text-app-dark-400">
-                        <p className="text-center text-app-red">
-                          Not enough funds!
-                        </p>
-                        <button
-                          className="border border-main rounded-full text-white py-2 px-6 mt-2 hoverable-btn"
-                          onClick={handleNavigate}
-                        >
-                          Deposit now over CELO network!
-                        </button>
-                        <p className="text-center"></p>
-                      </div>
-                    ) : (
-                      <p></p>
-                    )}
-
-                    {/* <div className="text-app-dark-400">
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount <
-                        0.25 && (
-                        <p>
-                          Looks like you're early. Get your land tokens now
-                          {NFT.landTokenInfo.totalHolders > 0 &&
-                            ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                          !
-                        </p>
-                      )}
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount <
-                        0.75 &&
-                        NFT.landTokenInfo.sold /
-                          NFT.landTokenInfo.currentAmount >
-                          0.25 && (
-                          <p>
-                            This land is at its peak point. Get your land tokens
-                            now
-                            {NFT.landTokenInfo.totalHolders > 0 &&
-                              ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                            !
-                          </p>
-                        )}
-                      {NFT.landTokenInfo.sold /
-                        NFT.landTokenInfo.currentAmount >
-                        0.75 &&
-                        NFT.landTokenInfo.available !== "0" && (
-                          <p>
-                            Hurry up, this land is selling out! Get your land
-                            tokens now
-                            {NFT.landTokenInfo.totalHolders > 0 &&
-                              ` and join other ${NFT.landTokenInfo.totalHolders} holders`}
-                            !
-                          </p>
-                        )}
-                      {NFT.landTokenInfo.available === "0" && (
-                        <p className="text-red-600">This land has sold out!</p>
-                      )}
-                    </div> */}
-                  {/* <button
-                      className="border border-main w-3/4 text-white py-2 "
-                      disabled
-                    >
-                      {NFT.landTokenInfo.totalHolders === 0
-                        ? "Be the first holder of this land!"
-                        : `There are ${NFT.landTokenInfo.totalHolders} holders already!`}
-                    </button> */}
-                  {/* </div> */}
                 </div>
               ) : (
                 <h1>""</h1>

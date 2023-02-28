@@ -1,10 +1,6 @@
-import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets } from "@rainbow-me/rainbowkit";
-import { configureChains, createClient } from "wagmi";
-import { publicProvider } from "@wagmi/core/providers/public";
-import { jsonRpcProvider } from "@wagmi/core/providers/jsonRpc";
+import { Chain } from "@rainbow-me/rainbowkit";
 
-const Celo = {
+export const Celo: Chain = {
   id: 42220,
   name: "Celo Mainnet",
   network: "Celo Mainnet",
@@ -33,21 +29,3 @@ const Celo = {
   },
   testnet: false,
 };
-
-export const { chains, provider } = configureChains(
-  [Celo],
-  [
-    jsonRpcProvider({ rpc: () => ({ http: "https://forno.celo.org" }) }),
-    publicProvider(),
-  ]
-);
-const { connectors } = getDefaultWallets({
-  appName: "Kolor dAPP",
-  chains,
-});
-
-export const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-});

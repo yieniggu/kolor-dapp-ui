@@ -18,7 +18,7 @@ const override = {
 };
 
 const Wallet = () => {
-  const { balances, checkingBalances } = useSelector((state) => state.token);
+  const { balances, gettingBalances } = useSelector((state) => state.token);
   const dispatch = useDispatch();
 
   const [copied, setCopied] = useState(false);
@@ -69,10 +69,10 @@ const Wallet = () => {
                 </span>
               </div>
             </div>
-            {checkingBalances ? (
+            {gettingBalances ? (
               <DotLoader
                 color="rgba(91, 230, 202, 0.84)"
-                loading={checkingBalances}
+                loading={gettingBalances}
                 cssOverride={override}
               />
             ) : (
@@ -110,10 +110,10 @@ const Wallet = () => {
           </div>
           <div className="flex flex-col w-full xl:w-2/3 gap-6">
             {/* <img src={CostaMap} alt="costa_map" className="rounded-2xl" /> */}
-            {checkingBalances ? (
+            {gettingBalances ? (
               <DotLoader
                 color="rgba(91, 230, 202, 0.84)"
-                loading={checkingBalances}
+                loading={gettingBalances}
                 cssOverride={override}
               />
             ) : (

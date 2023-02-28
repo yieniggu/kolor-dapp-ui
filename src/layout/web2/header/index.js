@@ -9,6 +9,7 @@ import { signOut } from "../../../store/slices/auth/thunks";
 const Header = () => {
   const [openMenu, setOpenMenu] = useState(false);
   const { checking, uid, role } = useSelector((state) => state.auth);
+  const { isOpen } = useSelector((state) => state.ui);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,9 +33,9 @@ const Header = () => {
             : "justify-end"
         } w-full items-center h-40 top-0 z-20 px-4 tiny:px-6 sm:px-12 md:px-16 lg:px-24 xl:px-32 2xl:px-40 3xl:px-48`}
       >
-        <div className="text-sm absolute top-14 -left-20 font-black text-white -rotate-45 bg-gradient px-20 py-2">
+        {/* <div className="text-sm absolute top-14 -left-20 font-black text-white -rotate-45 bg-gradient px-20 py-2">
           Alpha presale live!
-        </div>
+        </div> */}
         <div
           className={`justify-center items-center gap-4 ${
             location.pathname === "/" || location.pathname === "/signin"
@@ -50,14 +51,16 @@ const Header = () => {
           />
           <img src={Logo} alt="logo" className="w-16 md:w-20 xl:w-24" />
         </div>
-        {location.pathname !== "/signin" && (
-          <button
-            className="justify-center items-center hidden sm:block border border-white h-12 text-white rounded-full px-14 font-bold cursor-pointer hoverable-btn"
-            onClick={() => handleSignin()}
-          >
-            {!!uid ? "Sign out" : "Sign in"}
-          </button>
-        )}
+        {location.pathname !== "/signin" &&
+          location.pathname !== "/signup" &&
+          !isOpen && (
+            <button
+              className="justify-center items-center hidden sm:block border border-white h-12 text-white rounded-full px-14 font-bold cursor-pointer hoverable-btn"
+              onClick={() => handleSignin()}
+            >
+              {!!uid ? "Sign out" : "Sign in"}
+            </button>
+          )}
 
         <div className="flex md:hidden" onClick={() => setOpenMenu(!openMenu)}>
           <img src={IcoMenu} alt="menu" />

@@ -5,14 +5,14 @@ import AOS from "aos";
 import MiniMap from "../../../../assets/image/mini-map.png";
 import LogoIcon from "../../../../assets/logo/logo_icon.png";
 import { useNavigate } from "react-router-dom";
-import { getDate } from "../../../../utils/web3";
+import { getDate, isValidNetwork } from "../../../../utils/web3";
 import { LandTokenBalances } from "./landtokenbalances";
 import { Investments } from "./investments";
 import {
   getAssetsBalancesFromWallet,
   getInvestmentsFromWallet,
 } from "../../../../store/slices/token/thunks";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 
 const override = {
   margin: "0 auto",
@@ -23,12 +23,11 @@ export const Portfolio = () => {
   const { balances, gettingBalances, checkingInvestments, investments } =
     useSelector((state) => state.token);
 
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
+  const { chain } = useNetwork();
 
   useEffect(() => {
-    if (!investments) {
-      dispatch(getInvestmentsFromWallet(address));
-    }
+    address && dispatch(getInvestmentsFromWallet(address));
   }, [address]);
 
   useEffect(() => {
@@ -39,10 +38,14 @@ export const Portfolio = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!balances) {
-      dispatch(getAssetsBalancesFromWallet(address));
-    }
+    address && dispatch(getAssetsBalancesFromWallet(address));
   }, [address]);
+
+  useEffect(() => {
+    console.log("address: ", address, isConnected, chain);
+    (!address || !isConnected || !isValidNetwork(chain.id)) &&
+      navigate("/signin");
+  }, [address, chain]);
 
   return (
     <>
@@ -126,8 +129,8 @@ export const Portfolio = () => {
               <div className="flex flex-row justify-center gap-4">
                 <img className="w-10 my-auto" src={LogoIcon} />
                 <p className="text-white my-auto text-sm">
-                  {address.substring(0, 5)}...
-                  {address.substring(36)}
+                  {address?.substring(0, 5)}...
+                  {address?.substring(36)}
                 </p>
               </div>
               <h1 className="text-center text-lg text-white font-sans">

@@ -6,6 +6,9 @@ import Lock from "../../../assets/icons/ico_lock.svg";
 import { useForm } from "../../../hooks/useForm";
 import { useDispatch } from "react-redux";
 import { register } from "../../../store/slices/auth/thunks";
+import { useState } from "react";
+import { openModal } from "../../../store/slices/UI/uiSlice";
+import { AppModal } from "../../../components/modal/web2";
 
 const SignUp = () => {
   const dispatch = useDispatch();
@@ -17,15 +20,64 @@ const SignUp = () => {
   });
 
   const { name, email, password } = formValues;
+  const [tocChecked, setTockChecked] = useState(false);
+
+  const [validFields, setValidFields] = useState({
+    name: true,
+    email: true,
+    password: true,
+    toc: true,
+    allValid: true,
+  });
+
+  const validateFields = () => {
+    let vName, vEmail, vPassword, vToc, allValid;
+    vName = name.length > 4;
+    vEmail = email.match(
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    );
+
+    vPassword = password.length > 6;
+    vToc = tocChecked;
+
+    allValid = vName && vEmail && vPassword && vToc;
+    setValidFields({
+      name: vName,
+      email: vEmail,
+      password: vPassword,
+      toc: vToc,
+      allValid,
+    });
+
+    console.log("valid fields: ", validFields);
+  };
+
+  const inputChange = (e) => {
+    setValidFields({
+      name: true,
+      email: true,
+      password: true,
+      toc: true,
+    });
+
+    handleInputChange(e);
+  };
 
   const handleSignup = (e) => {
     e.preventDefault();
-    dispatch(register(name, email, password));
+    validateFields();
+
+    validFields.allValid && dispatch(register(name, email, password));
+  };
+
+  const openTocModal = () => {
+    dispatch(openModal({ type: "toc" }));
   };
 
   const navigate = useNavigate();
   return (
     <>
+      <AppModal />
       <Layout title="Kolor | Sign Up">
         <div className="flex bg-signin min-h-screen items-center justify-center pt-40 px-4">
           <div className="flex flex-col w-full tiny:w-96 h-136 bg-body rounded-3xl py-6">
@@ -55,7 +107,7 @@ const SignUp = () => {
                 </div>
               </div>
             </div>
-            <div className="flex flex-col px-3 sm:px-6 items-center gap-3 sm:gap-6 pt-4 sm:pt-0">
+            <div className="flex flex-col px-3 sm:px-6 items-center pt-4 sm:pt-0">
               <div className="flex bg-light rounded-2xl w-full py-3 px-4 gap-4">
                 <img src={User} alt="name" className="w-6" />
                 <input
@@ -64,10 +116,15 @@ const SignUp = () => {
                   className="w-full"
                   name="name"
                   value={name}
-                  onChange={handleInputChange}
+                  onChange={inputChange}
                 />
               </div>
-              <div className="flex bg-light rounded-2xl w-full py-3 px-4 gap-4">
+              {!validFields.name && (
+                <p className="text-red-500">
+                  Name must be at least 4 characters long
+                </p>
+              )}
+              <div className="flex bg-light rounded-2xl w-full py-3 px-4 gap-4 mt-4">
                 <img src={Email} alt="email" className="w-6" />
                 <input
                   type="text"
@@ -75,10 +132,13 @@ const SignUp = () => {
                   className="w-full"
                   name="email"
                   value={email}
-                  onChange={handleInputChange}
+                  onChange={inputChange}
                 />
               </div>
-              <div className="flex bg-light rounded-2xl w-full py-3 px-4 gap-4">
+              {!validFields.email && (
+                <p className="text-red-500">Enter a valid email</p>
+              )}
+              <div className="flex bg-light rounded-2xl w-full py-3 px-4 gap-4 mt-4">
                 <img src={Lock} alt="lock" className="w-7" />
                 <input
                   type="password"
@@ -86,10 +146,34 @@ const SignUp = () => {
                   className="w-full"
                   name="password"
                   value={password}
-                  onChange={handleInputChange}
+                  onChange={inputChange}
                 />
               </div>
+              {!validFields.password && (
+                <p className="text-red-500">
+                  Password must be at least 7 characters long
+                </p>
+              )}
             </div>
+
+            <div className="flex flex-row my-auto mx-10 text-white gap-2">
+              <input
+                className="my-auto"
+                type="checkbox"
+                id="cbox2"
+                value={tocChecked}
+              />{" "}
+              <p>
+                By clicking the checkbox you agree the{" "}
+                <span
+                  onClick={openTocModal}
+                  className="cursor-pointer underline hover:text-interaction"
+                >
+                  Terms and conditions
+                </span>
+              </p>
+            </div>
+
             <div className="flex flex-col px-3 sm:px-6 items-center gap-2 py-3">
               <div
                 onClick={() => navigate("/signin")}

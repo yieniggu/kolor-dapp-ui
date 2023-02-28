@@ -86,7 +86,7 @@ export const DaoCommunity = () => {
           ) : (
             <div className="flex flex-col lg:flex-row gap-6 grow-0 w-full">
               <div
-                className={`flex flex-col h-full bg-gray-600 rounded-2xl bg-opacity-75 py-6 px-2 lg:w-3/5 3xl:w-1/6 grow-0 ${
+                className={`flex flex-col h-96 bg-gray-600 rounded-2xl bg-opacity-75 py-6 px-2 lg:w-3/5 3xl:w-1/6 grow-0 ${
                   selected === "proposals"
                     ? "3xl:w-[420px] 2xl:w-[562px]"
                     : "md:w-[502px] xl:w-[316px]"

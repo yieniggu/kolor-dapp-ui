@@ -29,7 +29,7 @@ export const Proposals = () => {
 
   useEffect(() => {
     // console.log("getting with address");
-    if (address && !gettingProposals) dispatch(getProposals(id, address));
+    dispatch(getProposals(id, address));
   }, [address]);
 
   return (

@@ -9,6 +9,7 @@ import { getPublishedNFTs } from "../../../store/slices/NFT";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAccount, useNetwork } from "wagmi";
 import { isValidNetwork } from "../../../utils/web3";
+import { AppModal } from "../../../components/modal/web2";
 
 const override = {
   margin: "0 auto",
@@ -41,6 +42,7 @@ const Marketplace = () => {
 
   return (
     <>
+      <AppModal />
       <Layout title="Marketplace">
         <div className="flex gap-4 md:gap-8 lg:gap-12 xl:gap-16 min-h-screen w-full">
           <SideBar />

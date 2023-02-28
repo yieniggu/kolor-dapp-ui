@@ -4,11 +4,15 @@ import "slick-carousel/slick/slick-theme.css";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { openModal } from "../../store/slices/UI/uiSlice";
 
 const Placeholder = require("../../assets/image/placeholder.png");
 
 const MarketplaceItem = ({ land }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   useEffect(() => {
     AOS.init({ once: true });
   }, []);
@@ -60,13 +64,12 @@ const MarketplaceItem = ({ land }) => {
         >
           Explore land
         </button>
-        <a
-          href="https://docs.google.com/document/d/1UZAdoSTh3Wzpo4ZWLRMJIL0SeiFcxAf_8fGhgkx73s4/edit?usp=sharing"
-          className="text-center rounded-full text-white bg-gray-500 px-2 text-xs w-full md:w-3/5 lg:w-4/5 mx-auto"
-          target="_blank"
+        <p
+          onClick={() => dispatch(openModal({ type: "toc" }))}
+          className="text-center rounded-full text-white bg-gray-500 px-2 text-xs w-full md:w-3/5 lg:w-4/5 mx-auto cursor-pointer"
         >
           Terms and conditions
-        </a>
+        </p>
       </div>
       {/* )} */}
     </>

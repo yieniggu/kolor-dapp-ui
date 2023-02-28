@@ -31,10 +31,7 @@ const Wallet = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!balances) {
-      console.log("getting balances");
-      dispatch(getAssetsBalancesFromWallet(address));
-    }
+    dispatch(getAssetsBalancesFromWallet(address));
   }, [address]);
 
   useEffect(() => {

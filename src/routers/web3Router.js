@@ -18,11 +18,9 @@ import { DaoCommunity } from "../pages/web3/dashboard/dao/daoCommunity";
 import { Proposal } from "../pages/web3/dashboard/dao/proposal";
 import { WagmiConfig } from "wagmi";
 import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { chains, wagmiClient } from "../utils/web3/rainbowConfig";
+import { chains, wagmiClient } from "../utils/web3/newRainbowConfig";
 
-const override = {
-  background: "-webkit-linear-gradient(75deg, #41a58d, #eee)",
-};
+import "@rainbow-me/rainbowkit/styles.css";
 
 const Web3Pages = () => {
   const { loginType } = useSelector((state) => state.NFT);
