@@ -1,26 +1,31 @@
-import { RainbowKitProvider, ConnectButton } from "@rainbow-me/rainbowkit";
-import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import celoGroups from "@celo/rainbowkit-celo/lists";
-import { Alfajores, Celo } from "@celo/rainbowkit-celo/chains";
+import { createClient, configureChains } from "wagmi";
 
-// (NEW) rainbow>=0.8.1 && wagmi >= 0.9.0
-export const { chains, provider } = configureChains(
-  [Alfajores, Celo],
-  [
-    jsonRpcProvider({
-      rpc: (chain) => ({ http: chain.rpcUrls.default.http[0] }),
-    }),
-  ]
+import { celo } from "@wagmi/chains";
+
+import { publicProvider } from "wagmi/providers/public";
+
+import { MetaMaskConnector } from "wagmi/connectors/metaMask";
+import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
+
+// Configure chains & providers with the Alchemy provider.
+// Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
+const { chains, provider, webSocketProvider } = configureChains(
+  [celo],
+  [publicProvider()]
 );
 
-const connectors = celoGroups({
-  chains,
-  appName: (typeof document === "object" && document.title) || "Sample App",
-});
-
+// Set up client
 export const wagmiClient = createClient({
   autoConnect: true,
-  connectors,
+  connectors: [
+    new MetaMaskConnector({ chains }),
+    new WalletConnectConnector({
+      chains,
+      options: {
+        qrcode: true,
+      },
+    }),
+  ],
   provider,
+  webSocketProvider,
 });

@@ -17,36 +17,29 @@ import { AppModal } from "../components/modal/web3";
 import { DaoCommunity } from "../pages/web3/dashboard/dao/daoCommunity";
 import { Proposal } from "../pages/web3/dashboard/dao/proposal";
 import { WagmiConfig } from "wagmi";
-import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
-import { chains, wagmiClient } from "../utils/web3/newRainbowConfig";
-
-import "@rainbow-me/rainbowkit/styles.css";
+import { wagmiClient } from "../utils/web3/newRainbowConfig";
 
 const Web3Pages = () => {
-  const { loginType } = useSelector((state) => state.NFT);
-
   return (
     <div>
-      <AppModal />
-
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          <Routes>
-            <Route path="/signin" element={<SignIn />} />
+        <AppModal />
 
-            <Route path="/dashboard" element={<Dashboard />} />
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
 
-            <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
 
-            <Route path="lands/:id/buy" element={<Buy />} />
+          <Route path="/marketplace" element={<Marketplace />} />
 
-            <Route path="/wallet" element={<Wallet />} />
+          <Route path="lands/:id/buy" element={<Buy />} />
 
-            <Route path="/dao/:id" element={<DaoCommunity />} />
+          <Route path="/wallet" element={<Wallet />} />
 
-            <Route path="/dao/:id/proposals/:proposal" element={<Proposal />} />
-          </Routes>
-        </RainbowKitProvider>
+          <Route path="/dao/:id" element={<DaoCommunity />} />
+
+          <Route path="/dao/:id/proposals/:proposal" element={<Proposal />} />
+        </Routes>
       </WagmiConfig>
     </div>
   );

@@ -5,7 +5,7 @@ import IcoMenu from "../../../assets/icons/ico_menu.svg";
 import LogoIcon from "../../../assets/logo/logo_icon.png";
 import Logo from "../../../assets/logo/logo.png";
 import { useAccount, useDisconnect } from "wagmi";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { ConnectedWalletButton } from "../../../components/connect/ConnectedWalletButton";
 
 const Header = () => {
   // const { account } = useSelector((state) => state.connection);
@@ -51,14 +51,18 @@ const Header = () => {
           />
           <img src={Logo} alt="logo" className="w-16 md:w-20 xl:w-24" />
         </div>
-        {location.pathname !== "/signin" && !isOpen && <ConnectButton />}
+        {location.pathname !== "/signin" && !isOpen && (
+          <div className="hidden md:flex">
+            <ConnectedWalletButton />
+          </div>
+        )}
 
         <div className="flex md:hidden" onClick={() => setOpenMenu(!openMenu)}>
           <img src={IcoMenu} alt="menu" />
         </div>
         <div
           className={` fixed top-0 right-0 w-screen z-50 min-h-screen bg-black bg-opacity-90 transform shadow-lg shadow-white ${
-            openMenu ? " -trasnlate-x-0" : " translate-x-full"
+            openMenu ? " -translate-x-0" : " translate-x-full"
           } duration-200`}
         >
           <div

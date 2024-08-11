@@ -96,7 +96,9 @@ const Wallet = () => {
                     )}
                   </button>
                 </div>
-                <p className="truncate text-white">{address}</p>
+                <p className="truncate text-white">
+                  {address && isConnected && address}
+                </p>
               </div>
             )}
 

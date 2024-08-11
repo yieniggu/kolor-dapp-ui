@@ -4,6 +4,9 @@ import Modal from "react-modal";
 import { closeModal } from "../../../store/slices/UI/uiSlice";
 import { AcquireSuccess } from "../acquireSuccess";
 import { ConnectionError } from "./connectionError";
+import { ConnectWalletModal } from "../../connect/ConnectWalletModal";
+import { WalletInformation } from "../../connect/WalletInformation";
+import { Toc } from "../toc";
 
 const customStyles = {
   content: {
@@ -45,6 +48,10 @@ export const AppModal = () => {
       {type === "accountDetails" && <AccountDetails closeModal={closeModal} />}
       {error && <Error errorType={type} closeModal={closeModal} />}
       {type === "editAccount" && <EditAccount closeModal={closeModal} />} */}
+
+      {type === "connectWallet" && <ConnectWalletModal />}
+      {type === "walletInfo" && <WalletInformation />}
+      {type === "toc" && <Toc />}
     </Modal>
   );
 };
